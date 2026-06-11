@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>I CAN SCHOOL - Medical & Safety Suite</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Brain.js for AI Forecasting -->
+    <script src="https://unpkg.com/brain.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        primaryContainer: '#e0e7ff',
+                        onPrimaryContainer: '#312e81',
+                        surface: '#f8fafc',
+                        surfaceDim: '#f1f5f9',
+                        surfaceContainer: '#ffffff',
+                        outline: '#cbd5e1',
+                        error: '#dc2626',
+                        errorContainer: '#fee2e2',
+                        onErrorContainer: '#7f1d1d',
+                        success: '#059669',
+                        successContainer: '#d1fae5',
+                        onSuccessContainer: '#064e3b',
+                    },
+                    borderRadius: { '4xl': '2rem' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: theme('colors.surface'); -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: theme('colors.outline'); border-radius: 8px; }
+        
+        .toast-enter { transform: translateY(100%); opacity: 0; }
+        .toast-enter-active { transform: translateY(0); opacity: 1; transition: all 0.3s cubic-bezier(0.2, 0, 0, 1); }
+        .toast-exit { transform: translateY(100%); opacity: 0; transition: all 0.3s cubic-bezier(0.2, 0, 0, 1); }
+        .animate-fade-in { animation: fadeIn 0.3s cubic-bezier(0.2, 0, 0, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes sparkle-pulse { 0% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.5; transform: scale(1); } }
+        .ai-sparkle { animation: sparkle-pulse 2s infinite ease-in-out; }
+
+        .cal-square { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
+        .cal-0 { background-color: theme('colors.surfaceDim'); }
+        .cal-1 { background-color: #c7d2fe; }
+        .cal-2 { background-color: #818cf8; }
+        .cal-3 { background-color: #4f46e5; }
+        .cal-4 { background-color: #312e81; }
+
+        #timerDrawer { transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); }
+        .drawer-open { transform: translateX(0); }
+        .drawer-closed { transform: translateX(-100%); }
+
+        input[type="time"], input[type="date"], select, input[type="text"], input[type="password"], textarea {
+            min-height: 48px; background-color: theme('colors.surfaceDim'); border: 1px solid transparent; transition: all 0.2s ease;
+        }
+        input:focus, select:focus, textarea:focus {
+            background-color: theme('colors.surfaceContainer'); border-color: theme('colors.primary'); box-shadow: 0 0 0 4px theme('colors.primaryContainer');
+        }
+        
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: theme('colors.primary'); cursor: pointer; margin-top: -6px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: theme('colors.primaryContainer'); border-radius: 4px; }
+
+        /* 2D Anatomical Map Styles */
+        .anat-path { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 1.5; cursor: pointer; transition: all 0.2s ease; }
+        .anat-path:hover { fill: #fca5a5; stroke: #ef4444; }
+        .anat-path.selected { fill: #dc2626 !important; stroke: #7f1d1d !important; }
+        
+        .clinical-list-item { cursor: pointer; transition: all 0.2s ease; border-left: 3px solid transparent; }
+        .clinical-list-item:hover { background-color: #f8fafc; border-left-color: #cbd5e1; }
+        .clinical-list-item.selected { background-color: #fee2e2; border-left-color: #dc2626; color: #991b1b; font-weight: 700; }
+
+        /* Profile Timeline */
+        .profile-timeline-line::before {
+            content: ''; position: absolute; left: 11px; top: 10px; bottom: -20px; width: 2px;
+            background-color: theme('colors.slate.200'); z-index: 0;
+        }
+        .profile-timeline-item:last-child .profile-timeline-line::before { display: none; }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col relative pb-20 md:pb-0">
+
+    <!-- HEADER -->
+    <header class="bg-surfaceContainer shadow-sm sticky top-0 z-30" id="mainHeader">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3 md:gap-4">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-2xl shadow-md shadow-slate-200/50 flex items-center justify-center overflow-hidden border border-slate-100 p-1 flex-shrink-0">
+                    <img src="https://icanskill.com/img/logo/ican.svg" alt="ICS" class="w-full h-full object-contain" onerror="this.onerror=null; this.outerHTML='<div class=\'w-full h-full bg-primary rounded-xl text-white flex items-center justify-center font-black text-lg sm:text-xl\'>ICS</div>';">
+                </div>
+                <div class="flex flex-col justify-center">
+                    <h1 class="font-extrabold text-lg md:text-xl text-slate-900 tracking-tight leading-tight">I CAN SCHOOL</h1>
+                    <span class="text-[10px] md:text-xs font-semibold text-primary tracking-widest uppercase">Health & Safety</span>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex bg-surfaceDim p-1.5 rounded-full">
+                <button onclick="switchTab('formView')" id="tab-formView" class="px-6 py-2 text-sm font-semibold rounded-full bg-white shadow-sm text-onPrimaryContainer transition-all">Log Incident</button>
+                <button onclick="switchTab('dashboardView')" id="tab-dashboardView" class="px-6 py-2 text-sm font-semibold rounded-full text-slate-500 hover:text-slate-800 transition-all">Med Dashboard</button>
+                <button onclick="switchTab('attendanceView')" id="tab-attendanceView" class="px-6 py-2 text-sm font-semibold rounded-full text-slate-500 hover:text-slate-800 transition-all">Attendance</button>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button onclick="openStudentSearchModal()" class="text-sm font-medium bg-surfaceDim text-slate-700 hover:bg-slate-200 p-2 sm:px-4 sm:py-2.5 rounded-full transition-colors flex items-center gap-2">
+                    <i data-lucide="search" class="w-5 h-5 sm:w-4 sm:h-4"></i><span class="hidden sm:inline">Search</span>
+                </button>
+                <button onclick="openModal('emergencyModal')" class="text-sm font-bold bg-errorContainer text-onErrorContainer hover:bg-red-200 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full transition-colors flex items-center gap-2 shadow-sm">
+                    <i data-lucide="shield-alert" class="w-5 h-5 sm:w-4 sm:h-4"></i><span class="hidden sm:inline">Emergency</span>
+                </button>
+                <button onclick="openModal('settingsModal')" class="text-sm font-medium bg-surfaceDim text-slate-700 hover:bg-slate-200 p-2 sm:px-4 sm:py-2.5 rounded-full transition-colors flex items-center gap-2">
+                    <i data-lucide="settings" class="w-5 h-5 sm:w-4 sm:h-4"></i><span class="hidden sm:inline">Settings</span>
+                </button>
+                <button onclick="lockScreen()" id="manualLockBtn" class="hidden text-sm font-medium bg-slate-800 text-white hover:bg-slate-700 p-2 sm:px-3 sm:py-2.5 rounded-full transition-colors items-center gap-2"><i data-lucide="lock" class="w-5 h-5 sm:w-4 sm:h-4"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE NAV -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-surfaceContainer z-20 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] border-t border-slate-100">
+        <div class="grid grid-cols-3 items-center h-20 px-2">
+            <button onclick="switchTab('formView')" id="mobile-tab-formView" class="flex flex-col items-center justify-center w-full h-full text-xs font-bold text-primary">
+                <div class="bg-primaryContainer text-primary px-5 py-1.5 rounded-full mb-1 transition-colors" id="mobile-indicator-formView"><i data-lucide="file-plus" class="w-5 h-5"></i></div><span>Log</span>
+            </button>
+            <button onclick="switchTab('dashboardView')" id="mobile-tab-dashboardView" class="flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-500">
+                <div class="px-5 py-1.5 rounded-full mb-1 transition-colors text-slate-500" id="mobile-indicator-dashboardView"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></div><span>Medical</span>
+            </button>
+            <button onclick="switchTab('attendanceView')" id="mobile-tab-attendanceView" class="flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-500">
+                <div class="px-5 py-1.5 rounded-full mb-1 transition-colors text-slate-500" id="mobile-indicator-attendanceView"><i data-lucide="users" class="w-5 h-5"></i></div><span>Attend</span>
+            </button>
+        </div>
+    </div>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8" id="mainContent">
+        
+        <!-- MEDICAL LOG FORM TAB -->
+        <div id="formView" class="space-y-6 relative max-w-4xl mx-auto">
+            <div id="setupWarning" class="hidden bg-errorContainer border-l-4 border-error p-4 rounded-2xl shadow-sm flex items-start gap-3">
+                <i data-lucide="alert-triangle" class="w-5 h-5 text-onErrorContainer flex-shrink-0 mt-0.5"></i>
+                <div><h3 class="text-sm font-bold text-onErrorContainer">Connection Missing</h3><p class="text-sm text-onErrorContainer mt-1">Please connect the Google Sheet database in Settings to save data.</p></div>
+            </div>
+
+            <div class="bg-surfaceContainer rounded-4xl shadow-sm border border-slate-100 overflow-visible">
+                <div class="px-6 py-5 border-b border-slate-100/50 flex items-center gap-3">
+                    <div class="bg-primaryContainer text-primary p-2 rounded-xl"><i data-lucide="clipboard-plus" class="w-5 h-5"></i></div>
+                    <h2 class="text-xl font-bold text-slate-800">New Incident Report</h2>
+                </div>
+
+                <form id="incidentForm" class="p-6 sm:p-8 space-y-10">
+                    <div class="space-y-5">
+                        <div class="flex justify-between items-end border-b border-slate-100 pb-3">
+                            <h3 class="text-sm font-bold text-primary uppercase tracking-widest">1. Who & When</h3>
+                            <div class="w-32 sm:w-48"><label class="block text-xs font-bold text-slate-500 mb-1.5 pl-1">Time *</label><input type="time" id="incidentTime" required class="w-full px-4 py-3 rounded-2xl outline-none text-sm font-medium"></div>
+                        </div>
+                        <div id="studentContainer" class="space-y-3"></div>
+                        <button type="button" onclick="addStudentRow()" class="text-sm font-bold text-primary hover:text-onPrimaryContainer flex items-center gap-2 py-3 px-4 hover:bg-primaryContainer rounded-full transition-colors w-full justify-center sm:w-auto mt-2">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i> Add Another Student
+                        </button>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div class="border-b border-slate-100 pb-3"><h3 class="text-sm font-bold text-primary uppercase tracking-widest">2. What & Where</h3></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1.5 pl-1">Area of School *</label>
+                                <select id="schoolLocation" required class="w-full px-4 py-3 rounded-2xl outline-none text-sm">
+                                    <option value="" disabled selected>Select area...</option>
+                                    <option value="Playground / Recess">Playground / Recess</option>
+                                    <option value="Classroom">Classroom</option>
+                                    <option value="Gym / PE">Gym / PE</option>
+                                    <option value="Hallway / Stairs">Hallway / Stairs</option>
+                                    <option value="Cafeteria">Cafeteria</option>
+                                    <option value="Clinic / Office">Clinic / Office</option>
+                                    <option value="Bathroom">Bathroom</option>
+                                    <option value="Bus / Parking Lot">Bus / Parking Lot</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1.5 pl-1">Clinical Location (2D Map) *</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="location" required class="flex-grow px-4 py-3 rounded-2xl outline-none text-sm font-medium" placeholder="e.g. Left Anterior Femoral (Thigh)">
+                                    <button type="button" onclick="openModal('bodyMapModal')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-2xl flex items-center justify-center transition-colors flex-shrink-0 shadow-inner group border border-indigo-200">
+                                        <i data-lucide="accessibility" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-bold text-slate-700 mb-1.5 pl-1">Incident Type *</label>
+                                <select id="incidentType" required onchange="handleTypeChange()" class="w-full px-4 py-3 rounded-2xl outline-none text-sm">
+                                    <option value="" disabled selected>Select type...</option>
+                                    <option value="Minor Injury (Scrape/Cut)">Minor Injury (Scrape/Cut)</option>
+                                    <option value="Major Injury">Major Injury</option>
+                                    <option value="Suspected Fracture / Sprain">Suspected Fracture / Sprain</option>
+                                    <option value="Head Injury / Concussion">Head Injury / Concussion</option>
+                                    <option value="Eye Injury">Eye Injury</option>
+                                    <option value="Dental / Tooth Injury">Dental / Tooth Injury</option>
+                                    <option value="Nosebleed">Nosebleed</option>
+                                    <option value="Illness (Fever/Vomiting)">Illness (Fever/Vomiting)</option>
+                                    <option value="Rash / Skin Condition">Rash / Skin Condition</option>
+                                    <option value="Severe Allergic Reaction">Severe Allergic Reaction (Anaphylaxis)</option>
+                                    <option value="Asthma/Breathing Issue">Asthma / Breathing Issue</option>
+                                    <option value="Diabetic Emergency">Diabetic Emergency</option>
+                                    <option value="Seizure">Seizure</option>
+                                    <option value="Mental Health / Panic Attack">Mental Health / Panic Attack</option>
+                                    <option value="Medication Administration">Routine Medication</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Checklists Container -->
+                        <div id="protocolContainer" class="space-y-3">
+                            <div id="concussionProtocol" class="hidden bg-[#fff8e1] border border-[#ffecb3] rounded-3xl p-5 mt-2 animate-fade-in protocol-block">
+                                <h4 class="text-sm font-bold text-amber-900 mb-4 flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5"></i> Mandatory Head Injury Checklist</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-amber-900 font-medium">
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check conc-check w-5 h-5 text-amber-600 rounded-md border-amber-300"> Pupils equal and reactive</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check conc-check w-5 h-5 text-amber-600 rounded-md border-amber-300"> NO dizziness or blurred vision</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check conc-check w-5 h-5 text-amber-600 rounded-md border-amber-300"> NO nausea or vomiting</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check conc-check w-5 h-5 text-amber-600 rounded-md border-amber-300"> Student remembers the incident</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check conc-check w-5 h-5 text-amber-600 rounded-md border-amber-300"> NO loss of consciousness</label>
+                                </div>
+                            </div>
+                            <div id="asthmaProtocol" class="hidden bg-primaryContainer border border-indigo-200 rounded-3xl p-5 mt-2 animate-fade-in protocol-block">
+                                <h4 class="text-sm font-bold text-onPrimaryContainer mb-4 flex items-center gap-2"><i data-lucide="wind" class="w-5 h-5"></i> Asthma / Breathing Protocol</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-onPrimaryContainer font-medium">
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check asthma-check w-5 h-5 text-primary rounded-md border-indigo-300"> Assessed airway and wheezing</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check asthma-check w-5 h-5 text-primary rounded-md border-indigo-300"> Administered prescribed inhaler</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check asthma-check w-5 h-5 text-primary rounded-md border-indigo-300"> Monitored student for 10-15 mins</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check asthma-check w-5 h-5 text-primary rounded-md border-indigo-300"> Breathing returned to normal</label>
+                                </div>
+                            </div>
+                            <div id="allergyProtocol" class="hidden bg-errorContainer border border-red-200 rounded-3xl p-5 mt-2 animate-fade-in protocol-block">
+                                <h4 class="text-sm font-bold text-onErrorContainer mb-4 flex items-center gap-2"><i data-lucide="alert-octagon" class="w-5 h-5"></i> Severe Allergy Protocol</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-onErrorContainer font-medium">
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check allergy-check w-5 h-5 text-error rounded-md border-red-300"> Assessed for swelling (face/throat)</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check allergy-check w-5 h-5 text-error rounded-md border-red-300"> Administered EpiPen/Antihistamine</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check allergy-check w-5 h-5 text-error rounded-md border-red-300"> Logged time of administration</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check allergy-check w-5 h-5 text-error rounded-md border-red-300"> EMS / 911 notified immediately</label>
+                                </div>
+                            </div>
+                            <div id="diabeticProtocol" class="hidden bg-purple-50 border border-purple-200 rounded-3xl p-5 mt-2 animate-fade-in protocol-block">
+                                <h4 class="text-sm font-bold text-purple-900 mb-4 flex items-center gap-2"><i data-lucide="droplet" class="w-5 h-5"></i> Diabetic Emergency Protocol</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-purple-900 font-medium">
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check diabetic-check w-5 h-5 text-purple-600 rounded-md border-purple-300"> Checked blood glucose levels</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check diabetic-check w-5 h-5 text-purple-600 rounded-md border-purple-300"> Administered fast-acting carbs</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check diabetic-check w-5 h-5 text-purple-600 rounded-md border-purple-300"> Re-tested after 15 minutes</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check diabetic-check w-5 h-5 text-purple-600 rounded-md border-purple-300"> Symptoms improved / stabilized</label>
+                                </div>
+                            </div>
+                        </div>
+                        <p id="protocolWarning" class="hidden text-xs font-bold text-error mt-2 ml-2 flex items-center gap-1"><i data-lucide="info" class="w-3 h-3"></i> If any mandatory box cannot be checked, escalate immediately per ICS policy.</p>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5 pl-1">Description *</label>
+                            <textarea id="description" rows="3" required class="w-full px-4 py-3 rounded-2xl outline-none resize-none text-sm" placeholder="Briefly describe what happened..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div class="border-b border-slate-100 pb-3"><h3 class="text-sm font-bold text-primary uppercase tracking-widest">3. Action Taken</h3></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1.5 pl-1">Action *</label>
+                                <select id="actionTaken" required class="w-full px-4 py-3 rounded-2xl outline-none text-sm">
+                                    <option value="" disabled selected>Select action...</option>
+                                    <option value="Bandaged / Cleaned Wound">Bandaged / Cleaned Wound</option>
+                                    <option value="Ice Pack Applied">Ice Pack Applied</option>
+                                    <option value="Splinted / Wrapped">Splinted / Wrapped</option>
+                                    <option value="Rest in Clinic">Rest in Clinic</option>
+                                    <option value="Monitored Vitals">Monitored Vitals</option>
+                                    <option value="Administered Medication">Administered Medication</option>
+                                    <option value="Sent Home">Sent Home</option>
+                                    <option value="EMS / Ambulance Called">EMS / Ambulance Called</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1.5 pl-1">Parent Contacted?</label>
+                                <select id="parentContacted" class="w-full px-4 py-3 rounded-2xl outline-none text-sm">
+                                    <option value="No - Not Required">No - Not Required</option>
+                                    <option value="Yes - Spoke to Parent">Yes - Spoke to Parent</option>
+                                    <option value="Yes - Left Message">Yes - Left Message</option>
+                                    <option value="Tried - Unreachable">Tried - Unreachable</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div><label class="block text-sm font-bold text-slate-700 mb-1.5 pl-1">Additional Notes</label><textarea id="additionalNotes" rows="2" class="w-full px-4 py-3 rounded-2xl outline-none resize-none text-sm" placeholder="Witness names, specific medications given..."></textarea></div>
+
+                        <label class="bg-errorContainer/50 border border-errorContainer p-5 rounded-3xl flex items-start gap-4 cursor-pointer hover:bg-errorContainer transition-colors">
+                            <div class="flex items-center h-6 mt-0.5"><input id="followUpFlag" type="checkbox" class="w-6 h-6 text-error border-gray-300 rounded-lg focus:ring-error"></div>
+                            <div class="text-sm"><span class="font-extrabold text-onErrorContainer block mb-1">Require Follow-up Tomorrow</span><span class="text-error block leading-snug font-medium">Check this to pin the student to the dashboard for monitoring.</span></div>
+                        </label>
+                    </div>
+
+                    <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-end gap-4">
+                        <button type="submit" id="submitBtn" class="w-full sm:w-auto bg-primary hover:bg-onPrimaryContainer text-white font-bold py-4 px-10 rounded-full transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-200 text-base">
+                            <i data-lucide="save" class="w-5 h-5"></i><span>Save Incident</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MEDICAL DASHBOARD TAB -->
+        <div id="dashboardView" class="hidden space-y-6">
+            <div class="bg-gradient-to-r from-indigo-900 to-primary text-white p-6 md:p-8 rounded-4xl shadow-xl border border-indigo-700 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+                <i data-lucide="cpu" class="absolute -right-10 -top-10 w-48 h-48 text-indigo-400 opacity-10 rotate-12"></i>
+                <div class="flex items-start gap-4 relative z-10 w-full md:w-auto">
+                    <div class="p-3 bg-indigo-500/30 rounded-2xl backdrop-blur-sm border border-indigo-400/30 shadow-inner">
+                        <i data-lucide="sparkles" class="w-8 h-8 text-indigo-200 ai-sparkle"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-xl tracking-wide flex items-center gap-2">AI Epidemic Forecast</h3>
+                        <p class="text-indigo-200 text-sm font-medium mt-1">Client-side predictive neural network</p>
+                    </div>
+                </div>
+                <div class="relative z-10 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-3xl w-full md:w-auto min-w-[250px]">
+                    <div id="ai-status" class="flex items-center gap-2 text-indigo-100 text-sm font-bold mb-2">
+                        <i data-lucide="loader-2" class="w-4 h-4 animate-spin ai-loader"></i> <span>Analyzing patterns...</span>
+                    </div>
+                    <div id="ai-result" class="hidden">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-indigo-300 mb-1">Tomorrow's Projection</p>
+                        <h4 id="ai-prediction-value" class="text-3xl font-black text-white">--</h4>
+                        <p id="ai-prediction-text" class="text-sm font-bold mt-1 text-indigo-200">Awaiting data...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="outbreakBanner" class="hidden bg-error text-white p-6 rounded-3xl shadow-lg flex items-start sm:items-center gap-4 animate-fade-in">
+                <i data-lucide="shield-alert" class="w-10 h-10 flex-shrink-0"></i>
+                <div><h3 class="font-extrabold text-xl leading-tight">Contagion Alert Detected!</h3><p class="text-red-100 text-sm mt-1 font-medium" id="outbreakText">Multiple students reporting illness.</p></div>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-surfaceContainer p-5 rounded-4xl border border-slate-100 shadow-sm">
+                <div class="pl-2"><h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Medical Analytics</h2></div>
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <div class="flex items-center gap-2 text-sm bg-surface p-1.5 rounded-full border border-slate-200 flex-grow md:flex-grow-0">
+                        <input type="date" id="filterStart" class="bg-transparent border-none outline-none text-slate-700 font-medium w-full sm:w-auto px-3 cursor-pointer"><span class="text-slate-400 font-bold">-</span><input type="date" id="filterEnd" class="bg-transparent border-none outline-none text-slate-700 font-medium w-full sm:w-auto px-3 cursor-pointer">
+                        <button onclick="applyDateFilter()" class="bg-primary text-white p-2.5 rounded-full hover:bg-onPrimaryContainer transition-colors"><i data-lucide="filter" class="w-4 h-4"></i></button>
+                    </div>
+                    <button onclick="exportPDF()" class="p-3 sm:px-5 sm:py-2.5 bg-surfaceContainer border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-surface flex items-center justify-center gap-2 shadow-sm transition-colors flex-1 md:flex-none">
+                        <i data-lucide="download" class="w-4 h-4"></i> <span class="hidden sm:inline">PDF</span>
+                    </button>
+                    <button onclick="loadDashboardData()" id="refreshDashBtn" class="p-3 sm:px-5 sm:py-2.5 bg-primaryContainer text-onPrimaryContainer rounded-full text-sm font-bold hover:bg-indigo-200 flex items-center justify-center gap-2 shadow-sm transition-colors flex-1 md:flex-none">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i> <span class="hidden sm:inline">Sync</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="followUpSection" class="hidden">
+                <h3 class="text-sm font-bold text-error uppercase tracking-widest mb-4 flex items-center gap-2 pl-2"><i data-lucide="clipboard-list" class="w-5 h-5"></i> Pending Follow-ups (48hrs)</h3>
+                <div id="followUpContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-surfaceContainer p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-center">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider truncate mb-1">Total Logs</p><h3 class="text-3xl font-extrabold text-primary" id="statTotal">0</h3>
+                </div>
+                <div class="bg-surfaceContainer p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-center">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider truncate mb-1">Illness Reports</p><h3 class="text-3xl font-extrabold text-error" id="statIllness">0</h3>
+                </div>
+                <div class="bg-surfaceContainer p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-sm col-span-2 flex flex-col justify-center">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Most Common Issue</p><h3 class="text-xl font-extrabold text-slate-800 truncate" id="statTopType">--</h3>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-surfaceContainer p-6 rounded-4xl border border-slate-100 shadow-sm lg:col-span-1">
+                    <h3 class="text-sm font-bold text-slate-800 mb-6 text-center tracking-wide">Incidents by Location</h3>
+                    <div class="relative h-48 sm:h-64 w-full"><canvas id="locationChart"></canvas></div>
+                </div>
+                <div class="bg-surfaceContainer p-6 rounded-4xl border border-slate-100 shadow-sm lg:col-span-2">
+                    <h3 class="text-sm font-bold text-slate-800 mb-6 tracking-wide">Time of Day Spikes</h3>
+                    <div class="relative h-48 sm:h-64 w-full"><canvas id="timeChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="bg-surfaceContainer p-6 rounded-4xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+                    <h3 class="text-sm font-bold text-slate-800 tracking-wide">Incident Frequency (Last 150 Days)</h3>
+                    <div class="flex items-center gap-2 text-xs font-bold text-slate-500 bg-surface px-3 py-1.5 rounded-full">
+                        <span>Less</span><div class="cal-square cal-0"></div><div class="cal-square cal-1"></div><div class="cal-square cal-2"></div><div class="cal-square cal-3"></div><div class="cal-square cal-4"></div><span>More</span>
+                    </div>
+                </div>
+                <div class="flex overflow-x-auto pb-4 scrollbar-hide w-full" id="calScroll">
+                    <div id="githubCalendar" class="grid grid-rows-7 gap-1.5" style="grid-auto-flow: column;"></div>
+                </div>
+            </div>
+            
+            <div id="dashEmptyState" class="hidden bg-surfaceContainer border border-slate-200 rounded-4xl p-12 text-center">
+                <div class="bg-surfaceDim w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="bar-chart-2" class="w-10 h-10 text-slate-400"></i></div>
+                <h3 class="text-xl font-bold text-slate-800">No data available</h3>
+                <p class="text-slate-500 font-medium mt-2">Adjust filters or connect your Google Sheet.</p>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE VISUALISER TAB -->
+        <div id="attendanceView" class="hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-surfaceContainer p-5 rounded-4xl border border-slate-100 shadow-sm">
+                <div class="pl-2">
+                    <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Attendance Visualiser</h2>
+                    <p class="text-sm font-medium text-slate-500 mt-1">Upload reports to unlock insights</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <label class="flex items-center gap-2 px-5 py-2.5 bg-surfaceDim text-slate-700 rounded-full cursor-pointer hover:bg-slate-200 transition-colors font-medium border border-slate-200 text-sm">
+                        <i data-lucide="history" class="w-4 h-4"></i><span id="att-baseline-label" class="hidden sm:inline">1. Baseline CSV</span><span class="sm:hidden">Base</span><input type="file" id="att-baseline-upload" class="hidden" accept=".csv" />
+                    </label>
+                    <label class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-full cursor-pointer hover:bg-onPrimaryContainer transition-colors font-bold shadow-sm text-sm">
+                        <i data-lucide="upload-cloud" class="w-4 h-4"></i><span id="att-current-label" class="hidden sm:inline">2. Current CSV</span><span class="sm:hidden">Current</span><input type="file" id="att-csv-upload" class="hidden" accept=".csv" />
+                    </label>
+                </div>
+            </div>
+            <div id="att-empty-state" class="bg-surfaceContainer rounded-4xl p-16 text-center shadow-sm border border-slate-100">
+                <div class="inline-flex p-6 bg-primaryContainer text-primary rounded-full mb-6"><i data-lucide="file-spreadsheet" class="w-12 h-12"></i></div>
+                <h2 class="text-2xl font-bold mb-2 text-slate-800">Ready to Analyze?</h2>
+                <p class="text-slate-500 max-w-md mx-auto font-medium">Upload your school's attendance CSV files to unlock detailed charts, student risk assessments, and grade-level insights.</p>
+            </div>
+            
+            <div id="att-dashboard-content" class="hidden space-y-6 animate-fade-in">
+                <div class="bg-surfaceContainer p-4 rounded-full shadow-sm border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6 pl-6">
+                    <div class="flex items-center gap-4 w-full md:w-auto">
+                        <div class="p-2.5 bg-errorContainer text-onErrorContainer rounded-full"><i data-lucide="settings-2" class="w-5 h-5"></i></div>
+                        <div class="flex-1"><label class="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1">Risk Threshold (<span id="att-threshold-val">98</span>%)</label><input type="range" id="att-risk-threshold" min="80" max="99" value="98" class="w-full md:w-48 appearance-none bg-transparent"></div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto pr-2">
+                        <div class="relative flex-1 md:flex-none"><i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i><input id="att-search-input" type="text" placeholder="Search name..." class="pl-10 pr-4 py-2.5 bg-surfaceDim border border-slate-200 text-slate-800 rounded-full focus:ring-2 focus:ring-primary outline-none w-full md:w-56 transition-all text-sm font-medium"></div>
+                        <select id="att-grade-filter" class="px-5 py-2.5 bg-surfaceDim border border-slate-200 text-slate-800 rounded-full outline-none focus:ring-2 focus:ring-primary cursor-pointer text-sm font-medium"><option value="All">All Grades</option></select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-surfaceContainer p-6 rounded-3xl border border-slate-100 shadow-sm"><div class="flex justify-between items-start mb-4"><div class="p-3 bg-primaryContainer text-primary rounded-xl"><i data-lucide="users" class="w-5 h-5"></i></div><span class="text-[10px] font-bold text-primary bg-primaryContainer px-3 py-1 rounded-full uppercase tracking-wider">Enrolled</span></div><h3 class="text-slate-500 text-xs font-bold uppercase tracking-widest">Students</h3><p id="att-stat-total" class="text-3xl font-extrabold mt-1 text-slate-800">0</p></div>
+                    <div class="bg-surfaceContainer p-6 rounded-3xl border border-slate-100 shadow-sm"><div class="flex justify-between items-start mb-4"><div class="p-3 bg-successContainer text-success rounded-xl"><i data-lucide="trending-up" class="w-5 h-5"></i></div></div><h3 class="text-slate-500 text-xs font-bold uppercase tracking-widest">Avg. Attendance</h3><div class="flex items-end gap-2"><p id="att-stat-avg" class="text-3xl font-extrabold mt-1 text-success">0%</p><span id="att-trend-avg" class="text-xs font-bold mb-1 px-2.5 py-0.5 rounded-full hidden"></span></div></div>
+                    <div class="bg-surfaceContainer p-6 rounded-3xl border border-slate-100 shadow-sm"><div class="flex justify-between items-start mb-4"><div class="p-3 bg-indigo-100 text-indigo-700 rounded-xl"><i data-lucide="star" class="w-5 h-5"></i></div></div><h3 class="text-slate-500 text-xs font-bold uppercase tracking-widest">Perfect Records</h3><p id="att-stat-perfect" class="text-3xl font-extrabold mt-1 text-primary">0</p></div>
+                    <div class="bg-surfaceContainer p-6 rounded-3xl border border-slate-100 shadow-sm"><div class="flex justify-between items-start mb-4"><div class="p-3 bg-errorContainer text-error rounded-xl"><i data-lucide="alert-circle" class="w-5 h-5"></i></div></div><h3 class="text-slate-500 text-xs font-bold uppercase tracking-widest">Critical Attention</h3><p id="att-stat-risk" class="text-3xl font-extrabold mt-1 text-error">0</p></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-surfaceContainer p-6 rounded-4xl border border-slate-100 shadow-sm"><div class="mb-6"><h3 class="text-lg font-bold text-slate-800">Grade Performance</h3><p class="text-sm font-medium text-slate-500">Comparing average % by class</p></div><div class="relative h-64 w-full"><canvas id="attGradeChart"></canvas></div></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-surfaceContainer p-6 rounded-4xl border border-slate-100 shadow-sm"><h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><div class="p-1 bg-successContainer text-success rounded"><i data-lucide="thumbs-up" class="w-4 h-4"></i></div> Top Performers</h4><div id="att-top-performers" class="space-y-2.5"></div></div>
+                            <div class="bg-surfaceContainer p-6 rounded-4xl border border-slate-100 shadow-sm"><h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><div class="p-1 bg-errorContainer text-error rounded"><i data-lucide="thumbs-down" class="w-4 h-4"></i></div> Intervention Needed</h4><div id="att-bottom-performers" class="space-y-2.5"></div></div>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="bg-surfaceContainer p-6 rounded-4xl border border-slate-100 shadow-sm"><h3 class="text-lg font-bold mb-6 text-slate-800">Status Breakdown</h3><div class="relative h-56 w-full"><canvas id="attStatusChart"></canvas></div></div>
+                        <div class="bg-primaryContainer text-onPrimaryContainer p-6 rounded-4xl shadow-sm relative overflow-hidden"><i data-lucide="sparkles" class="absolute -right-4 -bottom-4 w-32 h-32 opacity-10 rotate-12"></i><h4 class="text-lg font-extrabold mb-2">Quick Insight</h4><p id="att-insight-text" class="text-sm font-medium leading-relaxed opacity-90">Please upload data to generate smart insights about your attendance patterns.</p></div>
+                    </div>
+                </div>
+                <div class="bg-surfaceContainer rounded-4xl shadow-sm border border-slate-100 overflow-hidden mb-12">
+                    <div class="p-6 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100">
+                        <div><h3 class="text-lg font-bold text-slate-800">Master Student List</h3><p class="text-sm font-medium text-slate-500 mt-1">Click on any row to view full student profile</p></div>
+                        <div id="att-comparison-badge" class="hidden px-4 py-2 bg-indigo-100 text-indigo-800 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-2"><i data-lucide="git-compare" class="w-4 h-4"></i> Comparing Data</div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-surfaceDim">
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors whitespace-nowrap" onclick="handleAttSort('name')">Student <i data-lucide="arrow-down-up" class="inline w-3 h-3"></i></th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors whitespace-nowrap" onclick="handleAttSort('grade')">Grade <i data-lucide="arrow-down-up" class="inline w-3 h-3"></i></th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest cursor-pointer text-center hover:text-primary transition-colors whitespace-nowrap" onclick="handleAttSort('absent')">Absences <i data-lucide="arrow-down-up" class="inline w-3 h-3"></i></th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest cursor-pointer text-right hover:text-primary transition-colors whitespace-nowrap" onclick="handleAttSort('baselineAttendance')">Baseline % <i data-lucide="arrow-down-up" class="inline w-3 h-3"></i></th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest cursor-pointer text-right hover:text-primary transition-colors whitespace-nowrap" onclick="handleAttSort('attendance')">Current % <i data-lucide="arrow-down-up" class="inline w-3 h-3"></i></th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest cursor-pointer text-right hover:text-primary transition-colors whitespace-nowrap" onclick="handleAttSort('delta')">Trend <i data-lucide="arrow-down-up" class="inline w-3 h-3"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody id="att-student-table-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- M3 Floating Action Button for Timers -->
+    <button onclick="toggleTimerDrawer()" id="timerFAB" class="fixed bottom-24 md:bottom-8 right-4 md:right-8 bg-surfaceContainer border border-slate-200 text-primary p-4 rounded-2xl shadow-xl z-40 transition-transform hover:scale-105 hover:bg-primary hover:text-white flex items-center justify-center">
+        <i data-lucide="bed" class="w-7 h-7"></i><span id="timerBadge" class="absolute -top-2 -right-2 bg-error text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center hidden">0</span>
+    </button>
+    <div id="timerDrawer" class="drawer-closed fixed top-0 left-0 h-full w-full sm:w-96 bg-surfaceContainer shadow-2xl z-50 flex flex-col border-r border-slate-200 rounded-r-3xl">
+        <div class="p-6 bg-primaryContainer text-onPrimaryContainer flex justify-between items-center h-20 rounded-tr-3xl">
+            <h3 class="font-extrabold flex items-center gap-2 text-lg"><i data-lucide="bed" class="w-6 h-6"></i> Resting Clinic</h3>
+            <button onclick="toggleTimerDrawer()" class="text-onPrimaryContainer hover:bg-white/50 p-2 rounded-full transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+        </div>
+        <div class="p-6 border-b border-slate-100 bg-surface">
+            <h4 class="text-xs font-bold text-primary uppercase tracking-widest mb-4">Add New Timer</h4>
+            <div class="space-y-4">
+                <input type="text" id="timerNameInput" placeholder="Student Name" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:border-primary focus:ring-2 focus:ring-primaryContainer text-sm font-medium">
+                <div class="grid grid-cols-4 gap-2">
+                    <button onclick="addTimer(5)" class="py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-primaryContainer hover:text-primary transition-colors">5m</button>
+                    <button onclick="addTimer(10)" class="py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-primaryContainer hover:text-primary transition-colors">10m</button>
+                    <button onclick="addTimer(15)" class="py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-primaryContainer hover:text-primary transition-colors">15m</button>
+                    <button onclick="addTimer(30)" class="py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-primaryContainer hover:text-primary transition-colors">30m</button>
+                </div>
+            </div>
+        </div>
+        <div class="flex-grow overflow-y-auto p-6 space-y-3" id="activeTimersContainer">
+            <p class="text-sm text-slate-400 text-center font-medium mt-4" id="emptyTimerState">No active resting timers.</p>
+        </div>
+    </div>
+    <div id="drawerOverlay" onclick="toggleTimerDrawer()" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity opacity-0"></div>
+
+    <!-- Modals -->
+    <!-- GLOBAL STUDENT SEARCH MODAL -->
+    <div id="studentSearchModal" onclick="if(event.target === this) closeModal('studentSearchModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] hidden flex items-start justify-center p-4 pt-20 opacity-0 transition-opacity duration-300">
+        <div class="bg-surfaceContainer rounded-3xl shadow-2xl w-full max-w-2xl transform scale-95 transition-transform duration-300 flex flex-col overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex items-center gap-3">
+                <i data-lucide="search" class="w-6 h-6 text-primary flex-shrink-0"></i>
+                <input type="text" id="globalStudentSearch" oninput="handleStudentSearchInput()" placeholder="Search any student by name..." class="w-full bg-transparent text-lg font-bold text-slate-800 outline-none placeholder-slate-400">
+                <button onclick="closeModal('studentSearchModal')" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors flex-shrink-0"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div id="studentSearchResults" class="max-h-[60vh] overflow-y-auto p-2">
+                <div class="p-8 text-center text-slate-400 text-sm font-medium">Type a name to search Roster, Medical, and Attendance records.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 360 STUDENT PROFILE MODAL -->
+    <div id="studentProfileModal" onclick="if(event.target === this) closeModal('studentProfileModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[80] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-surfaceContainer rounded-4xl shadow-2xl w-full max-w-4xl transform scale-95 transition-transform duration-300 flex flex-col h-[90vh] overflow-hidden">
+            <div class="bg-gradient-to-r from-primary to-indigo-800 p-8 pt-10 text-white relative flex-shrink-0">
+                <button onclick="closeModal('studentProfileModal')" class="absolute top-4 right-4 text-white/70 hover:text-white hover:bg-white/20 p-2 rounded-full transition-colors z-20"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <i data-lucide="fingerprint" class="absolute -right-4 -bottom-4 w-40 h-40 text-white opacity-10"></i>
+                <div class="flex items-center gap-6 relative z-10">
+                    <div id="sp-avatar" class="w-20 h-20 rounded-full bg-white text-primary flex items-center justify-center text-3xl font-black shadow-lg">A</div>
+                    <div>
+                        <h2 id="sp-name" class="text-3xl font-extrabold tracking-tight">Student Name</h2>
+                        <p id="sp-grade" class="text-indigo-200 font-bold uppercase tracking-widest text-xs mt-1">Grade --</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-grow overflow-y-auto p-6 md:p-8 bg-slate-50 flex flex-col md:flex-row gap-8">
+                <div class="w-full md:w-1/3 space-y-6">
+                    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4"></i> Medical Overview</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase">Total Incidents</p>
+                                <p id="sp-med-total" class="text-2xl font-black text-slate-800">0</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase">Last Incident</p>
+                                <p id="sp-med-latest" class="text-sm font-bold text-slate-800 mt-1">--</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i data-lucide="users" class="w-4 h-4"></i> Attendance Status</h4>
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase">Current Rate</p>
+                                <p id="sp-att-val" class="text-3xl font-black text-primary">--</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase">Absences</p>
+                                <p id="sp-abs-val" class="text-xl font-black text-error">--</p>
+                            </div>
+                        </div>
+                        <div id="sp-att-insight" class="text-xs font-medium text-slate-500 bg-surfaceDim p-3 rounded-xl border border-slate-100">
+                            No attendance data uploaded for this student yet.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-2/3">
+                    <h4 class="text-sm font-bold text-slate-800 mb-6 flex items-center gap-2"><i data-lucide="history" class="w-5 h-5 text-primary"></i> Complete Medical History</h4>
+                    <div id="sp-timeline" class="space-y-0 ml-2 relative"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2D CLINICAL ANATOMICAL MAP MODAL -->
+    <div id="bodyMapModal" onclick="if(event.target === this) closeModal('bodyMapModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[55] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-surfaceContainer rounded-4xl shadow-2xl w-full max-w-5xl transform scale-95 transition-transform duration-300 flex flex-col h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 text-rose-600"></i> Clinical Anatomical Mapping (2D)</h3>
+                    <p class="text-xs text-slate-500 font-medium">Select muscle groups from the visual schematic or the clinical index.</p>
+                </div>
+                <button onclick="closeModal('bodyMapModal')" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            
+            <div class="flex-grow flex flex-col md:flex-row overflow-hidden bg-slate-50">
+                <div class="w-full md:w-1/2 p-6 flex flex-col items-center justify-center overflow-y-auto border-r border-slate-100 bg-white">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Visual Ecorché Schematic</h4>
+                    <div class="flex gap-8 items-start justify-center w-full max-w-md mx-auto">
+                        
+                        <div class="flex flex-col items-center gap-2">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Anterior (Front)</span>
+                            <svg viewBox="0 0 100 240" class="h-64 sm:h-96 drop-shadow-sm overflow-visible">
+                                <circle cx="50" cy="15" r="12" class="anat-path" onclick="toggleAnat('head_ant')" id="svg-head_ant" />
+                                <rect x="45" y="27" width="10" height="8" class="anat-path" onclick="toggleAnat('neck_ant')" id="svg-neck_ant" />
+                                <path d="M40 35 L60 35 L70 50 L50 60 L30 50 Z" class="anat-path" onclick="toggleAnat('chest')" id="svg-chest" />
+                                <path d="M40 60 L60 60 L55 90 L45 90 Z" class="anat-path" onclick="toggleAnat('abs')" id="svg-abs" />
+                                <circle cx="28" cy="40" r="8" class="anat-path" onclick="toggleAnat('r_shoulder_ant')" id="svg-r_shoulder_ant" />
+                                <rect x="22" y="48" width="8" height="25" rx="4" class="anat-path" onclick="toggleAnat('r_bicep')" id="svg-r_bicep" />
+                                <rect x="20" y="75" width="6" height="25" rx="3" class="anat-path" onclick="toggleAnat('r_forearm_ant')" id="svg-r_forearm_ant" />
+                                <circle cx="23" cy="105" r="4" class="anat-path" onclick="toggleAnat('r_hand_ant')" id="svg-r_hand_ant" />
+                                <circle cx="72" cy="40" r="8" class="anat-path" onclick="toggleAnat('l_shoulder_ant')" id="svg-l_shoulder_ant" />
+                                <rect x="70" y="48" width="8" height="25" rx="4" class="anat-path" onclick="toggleAnat('l_bicep')" id="svg-l_bicep" />
+                                <rect x="74" y="75" width="6" height="25" rx="3" class="anat-path" onclick="toggleAnat('l_forearm_ant')" id="svg-l_forearm_ant" />
+                                <circle cx="77" cy="105" r="4" class="anat-path" onclick="toggleAnat('l_hand_ant')" id="svg-l_hand_ant" />
+                                <path d="M38 90 L62 90 L68 110 L50 115 L32 110 Z" class="anat-path" onclick="toggleAnat('pelvis_ant')" id="svg-pelvis_ant" />
+                                <rect x="34" y="115" width="12" height="40" rx="4" class="anat-path" onclick="toggleAnat('r_quad')" id="svg-r_quad" />
+                                <rect x="54" y="115" width="12" height="40" rx="4" class="anat-path" onclick="toggleAnat('l_quad')" id="svg-l_quad" />
+                                <circle cx="40" cy="160" r="5" class="anat-path" onclick="toggleAnat('r_knee')" id="svg-r_knee" />
+                                <circle cx="60" cy="160" r="5" class="anat-path" onclick="toggleAnat('l_knee')" id="svg-l_knee" />
+                                <rect x="36" y="167" width="8" height="40" rx="3" class="anat-path" onclick="toggleAnat('r_shin')" id="svg-r_shin" />
+                                <rect x="56" y="167" width="8" height="40" rx="3" class="anat-path" onclick="toggleAnat('l_shin')" id="svg-l_shin" />
+                                <path d="M34 210 L44 210 L46 220 L32 220 Z" class="anat-path" onclick="toggleAnat('r_foot_ant')" id="svg-r_foot_ant" />
+                                <path d="M56 210 L66 210 L68 220 L54 220 Z" class="anat-path" onclick="toggleAnat('l_foot_ant')" id="svg-l_foot_ant" />
+                            </svg>
+                        </div>
+
+                        <div class="flex flex-col items-center gap-2">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Posterior (Back)</span>
+                            <svg viewBox="0 0 100 240" class="h-64 sm:h-96 drop-shadow-sm overflow-visible">
+                                <circle cx="50" cy="15" r="12" class="anat-path" onclick="toggleAnat('head_post')" id="svg-head_post" />
+                                <rect x="45" y="27" width="10" height="8" class="anat-path" onclick="toggleAnat('neck_post')" id="svg-neck_post" />
+                                <path d="M35 35 L65 35 L50 65 Z" class="anat-path" onclick="toggleAnat('upper_back')" id="svg-upper_back" />
+                                <path d="M30 50 L70 50 L60 90 L40 90 Z" class="anat-path" onclick="toggleAnat('lats')" id="svg-lats" />
+                                <rect x="42" y="90" width="16" height="15" class="anat-path" onclick="toggleAnat('lower_back')" id="svg-lower_back" />
+                                <circle cx="28" cy="40" r="8" class="anat-path" onclick="toggleAnat('l_shoulder_post')" id="svg-l_shoulder_post" />
+                                <rect x="22" y="48" width="8" height="25" rx="4" class="anat-path" onclick="toggleAnat('l_tricep')" id="svg-l_tricep" />
+                                <rect x="20" y="75" width="6" height="25" rx="3" class="anat-path" onclick="toggleAnat('l_forearm_post')" id="svg-l_forearm_post" />
+                                <circle cx="23" cy="105" r="4" class="anat-path" onclick="toggleAnat('l_hand_post')" id="svg-l_hand_post" />
+                                <circle cx="72" cy="40" r="8" class="anat-path" onclick="toggleAnat('r_shoulder_post')" id="svg-r_shoulder_post" />
+                                <rect x="70" y="48" width="8" height="25" rx="4" class="anat-path" onclick="toggleAnat('r_tricep')" id="svg-r_tricep" />
+                                <rect x="74" y="75" width="6" height="25" rx="3" class="anat-path" onclick="toggleAnat('r_forearm_post')" id="svg-r_forearm_post" />
+                                <circle cx="77" cy="105" r="4" class="anat-path" onclick="toggleAnat('r_hand_post')" id="svg-r_hand_post" />
+                                <path d="M38 105 L62 105 L68 120 L50 125 L32 120 Z" class="anat-path" onclick="toggleAnat('glutes')" id="svg-glutes" />
+                                <rect x="34" y="125" width="12" height="35" rx="4" class="anat-path" onclick="toggleAnat('l_hamstring')" id="svg-l_hamstring" />
+                                <rect x="54" y="125" width="12" height="35" rx="4" class="anat-path" onclick="toggleAnat('r_hamstring')" id="svg-r_hamstring" />
+                                <rect x="36" y="167" width="8" height="40" rx="3" class="anat-path" onclick="toggleAnat('l_calf')" id="svg-l_calf" />
+                                <rect x="56" y="167" width="8" height="40" rx="3" class="anat-path" onclick="toggleAnat('r_calf')" id="svg-r_calf" />
+                                <path d="M36 210 L44 210 L42 215 L38 215 Z" class="anat-path" onclick="toggleAnat('l_heel')" id="svg-l_heel" />
+                                <path d="M56 210 L64 210 L62 215 L58 215 Z" class="anat-path" onclick="toggleAnat('r_heel')" id="svg-r_heel" />
+                            </svg>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="w-full md:w-1/2 p-0 flex flex-col h-full bg-white">
+                    <div class="p-4 border-b border-slate-100 bg-surface">
+                        <div class="relative w-full">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+                            <input type="text" id="anatSearch" onkeyup="filterAnatList()" placeholder="Search clinical terms (e.g. 'Trapezius')..." class="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-full text-sm outline-none focus:ring-2 focus:ring-primaryContainer">
+                        </div>
+                    </div>
+                    <div class="flex-grow overflow-y-auto p-2" id="clinicalListContainer"></div>
+                </div>
+            </div>
+
+            <div class="p-5 border-t border-slate-100 bg-white rounded-b-4xl">
+                <div class="min-h-[40px] mb-4 flex flex-wrap gap-2 items-center" id="selectedPartsTags">
+                    <span class="text-sm text-slate-400 font-medium italic">No clinical regions selected...</span>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button onclick="clearAnatSelection()" class="px-6 py-3.5 bg-slate-100 text-slate-700 rounded-full font-bold hover:bg-slate-200 transition-colors">Clear Selection</button>
+                    <button onclick="confirmAnatSelection()" class="flex-grow sm:flex-grow-0 bg-primary text-white px-8 py-3.5 rounded-full font-bold hover:bg-onPrimaryContainer transition-colors shadow-md shadow-indigo-200">Confirm Diagnosis Location</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Modal -->
+    <div id="emergencyModal" onclick="if(event.target === this) closeModal('emergencyModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-surfaceContainer rounded-4xl shadow-2xl w-full max-w-3xl transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-errorContainer text-onErrorContainer rounded-t-4xl">
+                <div class="flex items-center gap-3"><i data-lucide="shield-alert" class="w-6 h-6"></i><h3 class="text-lg font-extrabold tracking-wide">ICS Emergency Procedures</h3></div>
+                <button onclick="closeModal('emergencyModal')" class="hover:bg-white/30 p-2 rounded-full transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-6">
+                <!-- Keep existing emergency content... -->
+                <div class="bg-white border border-slate-200 p-5 rounded-3xl shadow-sm">
+                    <h4 class="font-bold text-slate-900 flex items-center gap-2 mb-3"><i data-lucide="bomb" class="text-error w-5 h-5"></i> Bomb Threat</h4>
+                    <ul class="text-sm text-slate-700 space-y-2 list-disc pl-5"><li><strong class="text-slate-900">Call 112:</strong> Notify Health & Safety.</li><li><strong class="text-slate-900">Do Not Touch:</strong> Keep 300m away.</li><li><strong class="text-slate-900">Evacuate:</strong> Move to seaside assembly.</li></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" onclick="if(event.target === this) closeModal('settingsModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[55] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-surfaceContainer rounded-4xl shadow-2xl w-full max-w-xl transform scale-95 transition-transform duration-300">
+            <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2"><i data-lucide="settings" class="w-5 h-5 text-primary"></i> App Settings</h3>
+                <button onclick="closeModal('settingsModal')" class="text-slate-400 hover:bg-slate-100 p-2 rounded-full transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-6 space-y-8">
+                <div>
+                    <label class="block text-sm font-bold text-slate-800 mb-1.5 pl-1">Google App Script URL</label>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="scriptUrlInput" class="w-full px-4 py-3 bg-surfaceDim rounded-2xl outline-none text-sm font-mono focus:ring-2 focus:ring-primaryContainer">
+                        <button onclick="fetchRoster()" class="w-full sm:w-auto px-6 py-3 text-sm font-bold bg-surface text-slate-700 hover:bg-slate-100 rounded-full border border-slate-200">Sync Roster</button>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 border-t border-slate-100 bg-surface flex justify-end gap-3 rounded-b-4xl">
+                <button onclick="closeModal('settingsModal')" class="px-6 py-3 text-sm text-slate-600 hover:bg-slate-200 rounded-full font-bold">Cancel</button>
+                <button onclick="saveSettings()" class="px-8 py-3 text-sm font-bold bg-primary hover:bg-onPrimaryContainer text-white rounded-full">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed bottom-24 md:bottom-8 left-1/2 transform -translate-x-1/2 md:translate-x-0 md:left-auto md:right-8 z-[110] flex flex-col gap-3 w-full max-w-[90%] md:max-w-sm pointer-events-none"></div>
+
+    <script>
+        // ------------------ GLOBAL APP LOGIC ------------------
+        let CONFIG_URL = localStorage.getItem('medilog_script_url') || '';
+        let allLogsCache = []; 
+
+        // Attendance State
+        let attAllStudents = []; 
+        let attBaselineData = null;
+        let attCurrentData = null;
+        let attFilteredStudents = [];
+        let attCurrentSort = { key: 'attendance', dir: 'desc' };
+        let attCurrentThreshold = 98;
+        let attGradeChartInstance = null;
+        let attStatusChartInstance = null;
+
+        // SMART DEDUPLICATION HELPERS
+        function getNormKey(name) {
+            if(!name) return '';
+            return name.toLowerCase().trim().split(/\s+/).sort().join(' ');
+        }
+
+        function getDeduplicatedRoster(data) {
+            const uniqueMap = new Map();
+            data.forEach(s => {
+                if(s && s.name) {
+                    const norm = getNormKey(s.name);
+                    if(!uniqueMap.has(norm)) uniqueMap.set(norm, s);
+                }
+            });
+            return Array.from(uniqueMap.values());
+        }
+
+        let rosterData = getDeduplicatedRoster(JSON.parse(localStorage.getItem('medilog_roster') || '[]'));
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            setupInitialState();
+            setupAutocomplete();
+            restoreTimers(); 
+            initClinicalList();
+            
+            const end = new Date(); const start = new Date(); start.setDate(end.getDate() - 30);
+            document.getElementById('filterEnd').valueAsDate = end; 
+            document.getElementById('filterStart').valueAsDate = start;
+
+            document.getElementById('att-csv-upload')?.addEventListener('change', (e) => handleAttUpload(e, 'current'));
+            document.getElementById('att-baseline-upload')?.addEventListener('change', (e) => handleAttUpload(e, 'baseline'));
+            document.getElementById('att-risk-threshold')?.addEventListener('input', (e) => {
+                attCurrentThreshold = parseInt(e.target.value);
+                document.getElementById('att-threshold-val').textContent = attCurrentThreshold;
+                updateAttDashboard();
+            });
+            document.getElementById('att-search-input')?.addEventListener('input', updateAttDashboard);
+            document.getElementById('att-grade-filter')?.addEventListener('change', updateAttDashboard);
+        });
+
+        function showToast(msg, type) {
+            const cont = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            let icon = type === 'success' ? 'check-circle' : type === 'error' ? 'alert-triangle' : 'info';
+            let colors = type === 'success' ? 'bg-primary text-white' : type === 'error' ? 'bg-error text-white' : 'bg-slate-800 text-white';
+            t.className = `flex items-center gap-3 px-5 py-4 rounded-2xl shadow-xl toast-enter w-full sm:w-auto font-bold tracking-wide ${colors} pointer-events-auto`;
+            t.innerHTML = `<i data-lucide="${icon}" class="w-5 h-5 flex-shrink-0"></i><p class="text-sm">${msg}</p>`;
+            cont.appendChild(t); lucide.createIcons();
+            requestAnimationFrame(() => { t.classList.remove('toast-enter'); t.classList.add('toast-enter-active'); });
+            setTimeout(() => { t.classList.remove('toast-enter-active'); t.classList.add('toast-exit'); t.addEventListener('transitionend', () => t.remove()); }, 3000);
+        }
+
+        function switchTab(id) {
+            ['formView', 'dashboardView', 'attendanceView'].forEach(tabId => {
+                document.getElementById(tabId).classList.add('hidden');
+                document.getElementById(`tab-${tabId}`).className = "px-6 py-2 text-sm font-semibold rounded-full text-slate-500 hover:text-slate-800 transition-all";
+                document.getElementById(`mobile-tab-${tabId}`).className = "flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-500";
+                document.getElementById(`mobile-indicator-${tabId}`).className = "px-5 py-1.5 rounded-full mb-1 transition-colors text-slate-500";
+            });
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(`tab-${id}`).className = "px-6 py-2 text-sm font-semibold rounded-full bg-white shadow-sm text-onPrimaryContainer transition-all";
+            document.getElementById(`mobile-tab-${id}`).className = "flex flex-col items-center justify-center w-full h-full text-xs font-bold text-primary";
+            document.getElementById(`mobile-indicator-${id}`).className = "bg-primaryContainer text-primary px-5 py-1.5 rounded-full mb-1 transition-colors";
+
+            if (id === 'dashboardView' && allLogsCache.length === 0) loadDashboardData();
+            const fab = document.getElementById('timerFAB');
+            if(id === 'formView' || id === 'dashboardView') fab.classList.remove('hidden'); else fab.classList.add('hidden');
+            window.scrollTo(0,0);
+        }
+
+        function openModal(id) {
+            const m = document.getElementById(id);
+            const content = m.querySelector('div');
+            m.classList.remove('hidden');
+            setTimeout(() => {
+                m.classList.remove('opacity-0');
+                if(content.classList.contains('scale-95')) { content.classList.replace('scale-95', 'scale-100'); }
+            }, 10);
+        }
+
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            const content = m.querySelector('div');
+            m.classList.add('opacity-0');
+            if(content.classList.contains('scale-100')) { content.classList.replace('scale-100', 'scale-95'); }
+            setTimeout(() => m.classList.add('hidden'), 300);
+        }
+
+        function saveSettings() {
+            CONFIG_URL = document.getElementById('scriptUrlInput').value.trim();
+            localStorage.setItem('medilog_script_url', CONFIG_URL);
+            if(CONFIG_URL) {
+                document.getElementById('setupWarning').classList.add('hidden');
+                silentFetchLogs(); 
+            }
+            showToast('Settings saved!', 'success');
+            closeModal('settingsModal');
+        }
+
+        // ------------------ 360 STUDENT PROFILE & GLOBAL SEARCH ------------------
+        function openStudentSearchModal() {
+            document.getElementById('globalStudentSearch').value = '';
+            document.getElementById('studentSearchResults').innerHTML = '<div class="p-8 text-center text-slate-400 text-sm font-medium">Type a name to search Roster, Medical, and Attendance records.</div>';
+            openModal('studentSearchModal');
+            setTimeout(() => document.getElementById('globalStudentSearch').focus(), 100);
+        }
+
+        function handleStudentSearchInput() {
+            const query = document.getElementById('globalStudentSearch').value.toLowerCase().trim();
+            const resultsContainer = document.getElementById('studentSearchResults');
+            resultsContainer.innerHTML = '';
+            
+            if(!query) {
+                resultsContainer.innerHTML = '<div class="p-8 text-center text-slate-400 text-sm font-medium">Type a name to search Roster, Medical, and Attendance records.</div>';
+                return;
+            }
+
+            let uniqueStudents = new Map();
+            rosterData.forEach(s => uniqueStudents.set(getNormKey(s.name), {name: s.name, grade: s.grade}));
+            allLogsCache.forEach(l => { if(l.name && !uniqueStudents.has(getNormKey(l.name))) uniqueStudents.set(getNormKey(l.name), {name: l.name, grade: l.grade}); });
+            attAllStudents.forEach(a => { if(a.name && !uniqueStudents.has(getNormKey(a.name))) uniqueStudents.set(getNormKey(a.name), {name: a.name, grade: a.grade}); });
+
+            const queryWords = query.split(/\s+/);
+            const matches = Array.from(uniqueStudents.values()).filter(s => {
+                const lowerName = s.name.toLowerCase();
+                return queryWords.every(w => lowerName.includes(w));
+            }).slice(0, 8);
+
+            if(matches.length === 0) {
+                resultsContainer.innerHTML = '<div class="p-4 text-center text-slate-500 text-sm font-medium mt-4">No students found.</div>';
+                return;
+            }
+
+            matches.forEach(m => {
+                resultsContainer.innerHTML += `
+                    <div class="flex items-center gap-4 p-3 hover:bg-surfaceDim cursor-pointer rounded-2xl transition-colors mb-1" onclick="closeModal('studentSearchModal'); viewStudentProfile('${m.name}', '${m.grade}')">
+                        <div class="w-12 h-12 rounded-full bg-indigo-50 border border-indigo-100 text-primary flex items-center justify-center font-black text-lg flex-shrink-0">${m.name.charAt(0).toUpperCase()}</div>
+                        <div class="flex-grow">
+                            <div class="font-bold text-slate-800">${m.name}</div>
+                            <div class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-0.5">Grade ${m.grade || '--'}</div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-300"></i>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function viewStudentProfile(name, grade) {
+            const targetKey = getNormKey(name);
+            
+            const att = attAllStudents.find(s => getNormKey(s.name) === targetKey);
+            const logs = allLogsCache.filter(l => l.name && getNormKey(l.name) === targetKey).sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            document.getElementById('sp-name').innerText = name;
+            document.getElementById('sp-grade').innerText = `Grade ${grade && grade !== 'undefined' ? grade : '--'}`;
+            document.getElementById('sp-avatar').innerText = name.charAt(0).toUpperCase();
+
+            document.getElementById('sp-med-total').innerText = logs.length;
+            document.getElementById('sp-med-latest').innerText = logs.length > 0 ? new Date(logs[0].date).toLocaleDateString() : 'None recorded';
+
+            if(att) {
+                document.getElementById('sp-att-val').innerText = `${att.attendance.toFixed(1)}%`;
+                document.getElementById('sp-abs-val').innerText = att.absent;
+                const status = att.attendance >= 98 ? 'excellent' : att.attendance >= 90 ? 'fair' : 'poor';
+                document.getElementById('sp-att-insight').innerHTML = `
+                    <div class="flex items-center gap-2 ${status === 'excellent' ? 'text-success' : status === 'fair' ? 'text-orange-600' : 'text-error'}">
+                        <i data-lucide="${status === 'excellent' ? 'check-circle' : 'alert-circle'}" class="w-4 h-4"></i>
+                        <span class="font-bold">${status === 'excellent' ? 'Excellent Attendance' : status === 'fair' ? 'Monitor Attendance' : 'High Risk - Intervention Needed'}</span>
+                    </div>
+                `;
+            } else {
+                document.getElementById('sp-att-val').innerText = '--';
+                document.getElementById('sp-abs-val').innerText = '--';
+                document.getElementById('sp-att-insight').innerHTML = 'No attendance data uploaded for this student yet.';
+            }
+
+            const timeline = document.getElementById('sp-timeline');
+            if(logs.length === 0) {
+                timeline.innerHTML = `
+                    <div class="text-center p-8 bg-surfaceDim rounded-3xl border border-slate-100">
+                        <i data-lucide="check-square" class="w-8 h-8 text-success mx-auto mb-3 opacity-50"></i>
+                        <p class="text-sm font-bold text-slate-500">No medical incidents on record.</p>
+                    </div>`;
+            } else {
+                timeline.innerHTML = logs.map((l, index) => {
+                    let icon = 'activity'; let color = 'text-primary'; let bg = 'bg-primaryContainer';
+                    if(l.type.includes('Minor')) { icon = 'bandaid'; color = 'text-orange-600'; bg = 'bg-orange-100'; }
+                    else if(l.type.includes('Major') || l.type.includes('Severe') || l.type.includes('Head')) { icon = 'alert-triangle'; color = 'text-error'; bg = 'bg-errorContainer'; }
+                    else if(l.type.includes('Illness')) { icon = 'thermometer'; color = 'text-rose-600'; bg = 'bg-rose-100'; }
+                    else if(l.type.includes('Medication')) { icon = 'pill'; color = 'text-indigo-600'; bg = 'bg-indigo-100'; }
+
+                    return `
+                    <div class="relative pl-8 pb-6 profile-timeline-item">
+                        <div class="profile-timeline-line"></div>
+                        <div class="absolute left-0 top-1 w-6 h-6 ${bg} ${color} rounded-full ring-4 ring-slate-50 flex items-center justify-center z-10">
+                            <i data-lucide="${icon}" class="w-3 h-3"></i>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-bold mb-1 uppercase tracking-widest">${new Date(l.date).toLocaleDateString()} • ${l.time || '--'}</div>
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-primary transition-colors">
+                            <h4 class="font-bold text-slate-800 text-sm mb-2">${l.type}</h4>
+                            <div class="space-y-1">
+                                <p class="text-xs text-slate-500 font-medium flex items-start gap-2"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0 mt-0.5"></i> <span>${l.schoolLocation} <br><span class="text-slate-400">${l.location ? l.location : ''}</span></span></p>
+                                <p class="text-xs text-slate-500 font-medium flex items-center gap-2"><i data-lucide="stethoscope" class="w-3.5 h-3.5 text-slate-400"></i> ${l.action}</p>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            }
+
+            lucide.createIcons();
+            openModal('studentProfileModal');
+        }
+
+        // ------------------ ATTENDANCE LOGIC (RESTORED) ------------------
+        function handleAttUpload(e, type) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true, skipEmptyLines: true, dynamicTyping: true,
+                complete: function(results) {
+                    const parsed = results.data.map((row, idx) => ({
+                        id: idx,
+                        name: row.Fullname || row.Name || 'Unknown',
+                        grade: row.Grade || 'N/A',
+                        lessons: row['Number of lessons'] || row.Lessons || 0,
+                        absent: row['Times absent'] || row.Absent || 0,
+                        attendance: parseFloat(row['Attendance (%)'] || row.Attendance || 0)
+                    }));
+
+                    if (type === 'baseline') {
+                        attBaselineData = parsed;
+                        document.getElementById('att-baseline-label').innerHTML = 'Baseline <i data-lucide="check" class="inline w-4 h-4 ml-1"></i>';
+                        if (attCurrentData) processAttMergedData();
+                        showToast('Baseline Loaded', 'success');
+                    } else {
+                        attCurrentData = parsed;
+                        document.getElementById('att-current-label').innerHTML = 'Current <i data-lucide="check" class="inline w-4 h-4 ml-1"></i>';
+                        processAttMergedData();
+                        showToast('Current Data Loaded', 'success');
+                    }
+                    lucide.createIcons();
+                }
+            });
+        }
+
+        function processAttMergedData() {
+            if (!attCurrentData) return;
+            attAllStudents = attCurrentData.map(s => {
+                const normS = getNormKey(s.name);
+                const prev = attBaselineData ? attBaselineData.find(b => getNormKey(b.name) === normS) : null;
+                return {
+                    ...s,
+                    baselineAttendance: prev ? prev.attendance : null,
+                    delta: prev ? (s.attendance - prev.attendance) : null
+                };
+            });
+
+            const grades = [...new Set(attAllStudents.map(s => s.grade))].sort();
+            const gradeFilter = document.getElementById('att-grade-filter');
+            gradeFilter.innerHTML = '<option value="All">All Grades</option>';
+            grades.forEach(g => gradeFilter.innerHTML += `<option value="${g}">${g}</option>`);
+
+            document.getElementById('att-empty-state').classList.add('hidden');
+            document.getElementById('att-dashboard-content').classList.remove('hidden');
+            updateAttDashboard();
+        }
+
+        function updateAttDashboard() {
+            applyAttFilters();
+            renderAttStats();
+            renderAttCharts();
+            renderAttTopBottom();
+            renderAttTable();
+            updateAttInsight();
+            lucide.createIcons();
+        }
+
+        function applyAttFilters() {
+            const term = document.getElementById('att-search-input').value.toLowerCase();
+            const grade = document.getElementById('att-grade-filter').value;
+            attFilteredStudents = attAllStudents.filter(s => {
+                return s.name.toLowerCase().includes(term) && (grade === 'All' || s.grade == grade);
+            });
+            attFilteredStudents.sort((a, b) => {
+                let valA = a[attCurrentSort.key] ?? -Infinity;
+                let valB = b[attCurrentSort.key] ?? -Infinity;
+                if (typeof valA === 'string') { valA = valA.toLowerCase(); valB = valB.toLowerCase(); }
+                if (valA < valB) return attCurrentSort.dir === 'asc' ? -1 : 1;
+                if (valA > valB) return attCurrentSort.dir === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function renderAttStats() {
+            const total = attAllStudents.length;
+            const avg = (attAllStudents.reduce((sum, s) => sum + s.attendance, 0) / total);
+            const perfect = attAllStudents.filter(s => s.attendance >= 100).length;
+            const risk = attAllStudents.filter(s => s.attendance < attCurrentThreshold).length;
+
+            document.getElementById('att-stat-total').textContent = total;
+            document.getElementById('att-stat-avg').textContent = avg.toFixed(1) + '%';
+            document.getElementById('att-stat-perfect').textContent = perfect;
+            document.getElementById('att-stat-risk').textContent = risk;
+
+            const trendAvg = document.getElementById('att-trend-avg');
+            if (attBaselineData) {
+                const baseAvg = (attBaselineData.reduce((sum, s) => sum + s.attendance, 0) / attBaselineData.length);
+                const diff = avg - baseAvg;
+                trendAvg.textContent = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)}%`;
+                trendAvg.className = `text-xs font-bold mb-1.5 px-2.5 py-0.5 rounded-full ${diff >= 0 ? 'bg-successContainer text-success' : 'bg-errorContainer text-error'}`;
+                trendAvg.classList.remove('hidden');
+                document.getElementById('att-comparison-badge').classList.remove('hidden');
+            } else { trendAvg.classList.add('hidden'); }
+        }
+
+        function renderAttCharts() {
+            const gradeGroups = {};
+            attAllStudents.forEach(s => {
+                if (!gradeGroups[s.grade]) gradeGroups[s.grade] = { sum: 0, baseSum: 0, count: 0, baseCount: 0 };
+                gradeGroups[s.grade].sum += s.attendance; gradeGroups[s.grade].count++;
+                if (s.baselineAttendance != null) { gradeGroups[s.grade].baseSum += s.baselineAttendance; gradeGroups[s.grade].baseCount++; }
+            });
+
+            const gradeLabels = Object.keys(gradeGroups).sort();
+            const gradeValues = gradeLabels.map(g => (gradeGroups[g].sum / gradeGroups[g].count).toFixed(2));
+            const baselineValues = gradeLabels.map(g => gradeGroups[g].baseCount > 0 ? (gradeGroups[g].baseSum / gradeGroups[g].baseCount).toFixed(2) : null);
+
+            const perfect = attAllStudents.filter(s => s.attendance >= 100).length;
+            const atRisk = attAllStudents.filter(s => s.attendance < attCurrentThreshold).length;
+            const good = attAllStudents.length - perfect - atRisk;
+
+            if (attGradeChartInstance) attGradeChartInstance.destroy();
+            if (attStatusChartInstance) attStatusChartInstance.destroy();
+
+            const datasets = [{ label: 'Current %', data: gradeValues, backgroundColor: '#4f46e5', borderRadius: 8, barThickness: attBaselineData ? 14 : 28 }];
+            if (attBaselineData) datasets.unshift({ label: 'Baseline %', data: baselineValues, backgroundColor: '#cbd5e1', borderRadius: 8, barThickness: 14 });
+
+            attGradeChartInstance = new Chart(document.getElementById('attGradeChart').getContext('2d'), {
+                type: 'bar',
+                data: { labels: gradeLabels, datasets: datasets },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 90, max: 100, grid:{display:false} }, x: { grid: { display: false } } }, plugins: { legend: { display: !!attBaselineData, position: 'bottom' } } }
+            });
+
+            attStatusChartInstance = new Chart(document.getElementById('attStatusChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Perfect', 'Good', 'Risk'],
+                    datasets: [{ data: [perfect, good, atRisk], backgroundColor: ['#059669', '#e0e7ff', '#dc2626'], borderWidth: 0, hoverOffset: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 10 } } } }
+            });
+        }
+
+        function renderAttTopBottom() {
+            const sorted = [...attAllStudents].sort((a, b) => b.attendance - a.attendance);
+            const top5 = sorted.slice(0, 5);
+            const bottom5 = sorted.filter(s => s.attendance < attCurrentThreshold).reverse().slice(0, 5);
+
+            const renderList = (elId, list, type) => {
+                const container = document.getElementById(elId);
+                const bg = type === 'success' ? 'bg-successContainer text-success' : 'bg-errorContainer text-error';
+                const txt = type === 'success' ? 'text-success' : 'text-error';
+                container.innerHTML = list.map(s => `
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-surfaceDim border border-transparent hover:border-slate-200 transition-all cursor-pointer" onclick="viewStudentProfile('${s.name}', '${s.grade}')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full ${bg} flex items-center justify-center font-bold text-xs">${s.name[0].toUpperCase()}</div>
+                            <span class="text-sm font-bold text-slate-800 truncate w-32">${s.name}</span>
+                        </div>
+                        <span class="text-sm font-black ${txt}">${s.attendance.toFixed(1)}%</span>
+                    </div>
+                `).join('');
+            };
+
+            renderList('att-top-performers', top5, 'success');
+            renderList('att-bottom-performers', bottom5, 'error');
+        }
+
+        function renderAttTable() {
+            const tbody = document.getElementById('att-student-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            attFilteredStudents.forEach(s => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-surfaceDim transition-colors cursor-pointer group';
+                row.onclick = () => viewStudentProfile(s.name, s.grade);
+                
+                const badgeClass = s.attendance >= 100 ? 'bg-successContainer text-success' : s.attendance >= attCurrentThreshold ? 'bg-primaryContainer text-primary' : 'bg-errorContainer text-error';
+
+                row.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold group-hover:bg-primary group-hover:text-white transition-all text-xs">${s.name[0].toUpperCase()}</div>
+                            <span class="font-bold text-slate-800 text-sm">${s.name}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4"><span class="px-2.5 py-1 bg-surfaceDim border border-slate-200 rounded-md text-xs font-bold text-slate-500">${s.grade}</span></td>
+                    <td class="px-6 py-4 text-center font-medium text-sm ${s.absent > 10 ? 'text-error font-bold' : 'text-slate-500'}">${s.absent}</td>
+                    <td class="px-6 py-4 text-right font-medium text-sm text-slate-500">${s.baselineAttendance != null ? s.baselineAttendance.toFixed(1) + '%' : '-'}</td>
+                    <td class="px-6 py-4 text-right"><span class="px-3 py-1.5 rounded-full text-xs font-black ${badgeClass}">${s.attendance.toFixed(1)}%</span></td>
+                    <td class="px-6 py-4 text-right text-sm font-bold">${s.delta != null ? `<span class="${s.delta > 0 ? 'text-success' : s.delta < 0 ? 'text-error' : 'text-slate-500'}">${s.delta > 0 ? '↑' : s.delta < 0 ? '↓' : '–'} ${Math.abs(s.delta).toFixed(1)}%</span>` : '-'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateAttInsight() {
+            const riskCount = attAllStudents.filter(s => s.attendance < attCurrentThreshold).length;
+            const topGrade = Object.keys(attAllStudents.reduce((acc, s) => {
+                if(!acc[s.grade]) acc[s.grade] = {t:0, c:0};
+                acc[s.grade].t += s.attendance; acc[s.grade].c++;
+                return acc;
+            }, {})).sort((a,b) => b.t - a.t)[0] || 'N/A';
+            document.getElementById('att-insight-text').textContent = `Currently, ${riskCount} students are below your ${attCurrentThreshold}% threshold. Grade ${topGrade} is currently showing the strongest attendance engagement across the campus.`;
+        }
+
+        function handleAttSort(key) {
+            if (attCurrentSort.key === key) attCurrentSort.dir = attCurrentSort.dir === 'asc' ? 'desc' : 'asc';
+            else { attCurrentSort.key = key; attCurrentSort.dir = 'desc'; }
+            updateAttDashboard();
+        }
+
+        // ------------------ 2D ANATOMICAL MAPPER (SVG + LIST) ------------------
+        const ANATOMY_DATA = [
+            { id: 'head_ant', name: 'Cranial / Facial (Face/Forehead)', group: 'Head & Neck' },
+            { id: 'head_post', name: 'Occipital (Back of Head)', group: 'Head & Neck' },
+            { id: 'neck_ant', name: 'Cervical Anterior (Front Neck / Throat)', group: 'Head & Neck' },
+            { id: 'neck_post', name: 'Cervical Posterior (Nape / Back of Neck)', group: 'Head & Neck' },
+            { id: 'chest', name: 'Pectoralis (Chest)', group: 'Torso' },
+            { id: 'abs', name: 'Abdominal (Stomach)', group: 'Torso' },
+            { id: 'upper_back', name: 'Trapezius (Upper Back)', group: 'Torso' },
+            { id: 'lats', name: 'Latissimus Dorsi (Mid Back)', group: 'Torso' },
+            { id: 'lower_back', name: 'Lumbar (Lower Back)', group: 'Torso' },
+            { id: 'pelvis_ant', name: 'Pelvic / Groin (Anterior)', group: 'Torso' },
+            { id: 'glutes', name: 'Gluteal (Buttocks)', group: 'Torso' },
+            { id: 'r_shoulder_ant', name: 'Right Deltoid Anterior (Front Shoulder)', group: 'Right Arm' },
+            { id: 'r_shoulder_post', name: 'Right Deltoid Posterior (Back Shoulder)', group: 'Right Arm' },
+            { id: 'r_bicep', name: 'Right Biceps Brachii (Upper Arm Front)', group: 'Right Arm' },
+            { id: 'r_tricep', name: 'Right Triceps Brachii (Upper Arm Back)', group: 'Right Arm' },
+            { id: 'r_forearm_ant', name: 'Right Antebrachial Anterior (Forearm Front)', group: 'Right Arm' },
+            { id: 'r_forearm_post', name: 'Right Antebrachial Posterior (Forearm Back)', group: 'Right Arm' },
+            { id: 'r_hand_ant', name: 'Right Palmar (Palm of Hand)', group: 'Right Arm' },
+            { id: 'r_hand_post', name: 'Right Dorsal Carpal (Back of Hand)', group: 'Right Arm' },
+            { id: 'l_shoulder_ant', name: 'Left Deltoid Anterior (Front Shoulder)', group: 'Left Arm' },
+            { id: 'l_shoulder_post', name: 'Left Deltoid Posterior (Back Shoulder)', group: 'Left Arm' },
+            { id: 'l_bicep', name: 'Left Biceps Brachii (Upper Arm Front)', group: 'Left Arm' },
+            { id: 'l_tricep', name: 'Left Triceps Brachii (Upper Arm Back)', group: 'Left Arm' },
+            { id: 'l_forearm_ant', name: 'Left Antebrachial Anterior (Forearm Front)', group: 'Left Arm' },
+            { id: 'l_forearm_post', name: 'Left Antebrachial Posterior (Forearm Back)', group: 'Left Arm' },
+            { id: 'l_hand_ant', name: 'Left Palmar (Palm of Hand)', group: 'Left Arm' },
+            { id: 'l_hand_post', name: 'Left Dorsal Carpal (Back of Hand)', group: 'Left Arm' },
+            { id: 'r_quad', name: 'Right Quadriceps Femoris (Front Thigh)', group: 'Right Leg' },
+            { id: 'r_hamstring', name: 'Right Hamstrings (Back Thigh)', group: 'Right Leg' },
+            { id: 'r_knee', name: 'Right Patellar (Knee)', group: 'Right Leg' },
+            { id: 'r_shin', name: 'Right Tibialis Anterior (Shin)', group: 'Right Leg' },
+            { id: 'r_calf', name: 'Right Gastrocnemius (Calf)', group: 'Right Leg' },
+            { id: 'r_foot_ant', name: 'Right Dorsal Pedal (Top of Foot)', group: 'Right Leg' },
+            { id: 'r_heel', name: 'Right Calcaneal (Heel)', group: 'Right Leg' },
+            { id: 'l_quad', name: 'Left Quadriceps Femoris (Front Thigh)', group: 'Left Leg' },
+            { id: 'l_hamstring', name: 'Left Hamstrings (Back Thigh)', group: 'Left Leg' },
+            { id: 'l_knee', name: 'Left Patellar (Knee)', group: 'Left Leg' },
+            { id: 'l_shin', name: 'Left Tibialis Anterior (Shin)', group: 'Left Leg' },
+            { id: 'l_calf', name: 'Left Gastrocnemius (Calf)', group: 'Left Leg' },
+            { id: 'l_foot_ant', name: 'Left Dorsal Pedal (Top of Foot)', group: 'Left Leg' },
+            { id: 'l_heel', name: 'Left Calcaneal (Heel)', group: 'Left Leg' }
+        ];
+
+        let selectedAnatParts = new Set();
+
+        function initClinicalList() {
+            const container = document.getElementById('clinicalListContainer');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            const grouped = {};
+            ANATOMY_DATA.forEach(item => {
+                if(!grouped[item.group]) grouped[item.group] = [];
+                grouped[item.group].push(item);
+            });
+
+            for (const [groupName, items] of Object.entries(grouped)) {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'mb-4 anat-group-container';
+                groupDiv.innerHTML = `<h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 mb-1 sticky top-0 bg-white z-10 py-1">${groupName}</h5>`;
+                
+                items.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'clinical-list-item px-3 py-2 text-sm text-slate-700 rounded-lg';
+                    el.id = `list-${item.id}`;
+                    el.innerText = item.name;
+                    el.onclick = () => toggleAnat(item.id);
+                    el.onmouseenter = () => { const svg = document.getElementById(`svg-${item.id}`); if(svg && !selectedAnatParts.has(item.id)) svg.style.fill = '#fca5a5'; };
+                    el.onmouseleave = () => { const svg = document.getElementById(`svg-${item.id}`); if(svg && !selectedAnatParts.has(item.id)) svg.style.fill = ''; };
+                    groupDiv.appendChild(el);
+                });
+                container.appendChild(groupDiv);
+            }
+        }
+
+        function filterAnatList() {
+            const term = document.getElementById('anatSearch').value.toLowerCase();
+            document.querySelectorAll('.clinical-list-item').forEach(el => {
+                if (el.innerText.toLowerCase().includes(term)) el.style.display = 'block';
+                else el.style.display = 'none';
+            });
+            document.querySelectorAll('.anat-group-container').forEach(grp => {
+                const hasVisible = Array.from(grp.querySelectorAll('.clinical-list-item')).some(item => item.style.display !== 'none');
+                grp.style.display = hasVisible ? 'block' : 'none';
+            });
+        }
+
+        function toggleAnat(id) {
+            const listEl = document.getElementById(`list-${id}`);
+            const svgEl = document.getElementById(`svg-${id}`);
+            
+            if (selectedAnatParts.has(id)) {
+                selectedAnatParts.delete(id);
+                if(listEl) listEl.classList.remove('selected');
+                if(svgEl) { svgEl.classList.remove('selected'); svgEl.style.fill = ''; }
+            } else {
+                selectedAnatParts.add(id);
+                if(listEl) listEl.classList.add('selected');
+                if(svgEl) svgEl.classList.add('selected');
+            }
+            updateAnatTags();
+        }
+
+        function updateAnatTags() {
+            const container = document.getElementById('selectedPartsTags');
+            if(selectedAnatParts.size === 0) {
+                container.innerHTML = '<span class="text-sm text-slate-400 font-medium italic">No clinical regions selected...</span>';
+                return;
+            }
+            container.innerHTML = '';
+            selectedAnatParts.forEach(id => {
+                const item = ANATOMY_DATA.find(a => a.id === id);
+                if(item) {
+                    const tag = document.createElement('span');
+                    tag.className = 'bg-rose-100 text-rose-800 text-xs px-3 py-1.5 rounded-md font-bold shadow-sm border border-rose-200';
+                    tag.innerText = item.name;
+                    container.appendChild(tag);
+                }
+            });
+        }
+
+        function clearAnatSelection() {
+            selectedAnatParts.clear();
+            document.querySelectorAll('.clinical-list-item.selected').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.anat-path.selected').forEach(el => { el.classList.remove('selected'); el.style.fill = ''; });
+            updateAnatTags();
+            document.getElementById('location').value = "";
+        }
+
+        function confirmAnatSelection() {
+            if (selectedAnatParts.size > 0) {
+                const locInput = document.getElementById('location');
+                const names = Array.from(selectedAnatParts).map(id => ANATOMY_DATA.find(a => a.id === id).name);
+                const partsStr = names.join(' | ');
+                if (locInput.value && !locInput.value.includes(partsStr)) {
+                     locInput.value = locInput.value + (locInput.value.length > 0 ? ' | ' : '') + partsStr;
+                } else { locInput.value = partsStr; }
+            }
+            closeModal('bodyMapModal');
+        }
+
+        // ------------------ AI EPIDEMIC FORECASTING (BRAIN.JS) ------------------
+        function runAIForecast(logs) {
+            const statusEl = document.getElementById('ai-status');
+            const resultEl = document.getElementById('ai-result');
+            const predText = document.getElementById('ai-prediction-text');
+            const predVal = document.getElementById('ai-prediction-value');
+            
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            const dailyCounts = {};
+            for(let i=0; i<30; i++) {
+                const d = new Date(); d.setDate(d.getDate() - i);
+                dailyCounts[d.toDateString()] = 0;
+            }
+
+            logs.forEach(l => {
+                if(l.type && l.type.includes('Illness')) {
+                    const d = new Date(l.date).toDateString();
+                    if(dailyCounts[d] !== undefined) dailyCounts[d]++;
+                }
+            });
+
+            const chronologicalData = Object.keys(dailyCounts).sort((a,b) => new Date(a) - new Date(b)).map(k => dailyCounts[k]);
+            const totalRecentIllness = chronologicalData.reduce((a,b)=>a+b, 0);
+            
+            if(totalRecentIllness < 3) {
+                statusEl.classList.add('hidden'); resultEl.classList.remove('hidden');
+                predVal.innerText = "0"; predVal.className = "text-3xl font-black text-white";
+                predText.innerText = "Data healthy. No outbreaks detected."; return;
+            }
+
+            const MAX_SCALE = 20; const trainingData = [];
+            for(let i=0; i < chronologicalData.length - 3; i++) {
+                trainingData.push({
+                    input: [ chronologicalData[i]/MAX_SCALE, chronologicalData[i+1]/MAX_SCALE, chronologicalData[i+2]/MAX_SCALE ],
+                    output: [chronologicalData[i+3]/MAX_SCALE]
+                });
+            }
+
+            setTimeout(() => {
+                const net = new brain.NeuralNetwork({ hiddenLayers: [4] });
+                net.train(trainingData, { iterations: 1000, errorThresh: 0.01 });
+                const last3 = [ chronologicalData[chronologicalData.length-3]/MAX_SCALE, chronologicalData[chronologicalData.length-2]/MAX_SCALE, chronologicalData[chronologicalData.length-1]/MAX_SCALE ];
+                let predictedCases = Math.round(net.run(last3)[0] * MAX_SCALE);
+                if(predictedCases < 0) predictedCases = 0;
+
+                statusEl.classList.add('hidden'); resultEl.classList.remove('hidden');
+                predVal.innerText = predictedCases;
+
+                if(predictedCases > 3) {
+                    predVal.className = "text-3xl font-black text-rose-300"; predText.innerText = "Warning: Spike predicted. Ensure clinic is stocked.";
+                } else {
+                    predVal.className = "text-3xl font-black text-white"; predText.innerText = "Stable trend predicted.";
+                }
+            }, 500); 
+        }
+
+        // ------------------ FORM & MEDICAL LOGIC ------------------
+        function setupInitialState() {
+            if (!CONFIG_URL) document.getElementById('setupWarning').classList.remove('hidden');
+            document.getElementById('incidentTime').value = new Date().toTimeString().slice(0, 5);
+            addStudentRow(); 
+            silentFetchLogs(); 
+        }
+        
+        function silentFetchLogs() {
+            if (!CONFIG_URL) return;
+            fetch(CONFIG_URL + '?action=getLogs').then(res => res.json()).then(logs => {
+                if (!logs.error) allLogsCache = logs;
+            }).catch(e => console.log("Silent log fetch error"));
+        }
+
+        function addStudentRow() {
+            const container = document.getElementById('studentContainer');
+            const row = document.createElement('div');
+            row.className = 'flex flex-col sm:flex-row gap-3 items-start student-row relative bg-surfaceDim sm:bg-transparent p-4 sm:p-0 rounded-3xl sm:rounded-none animate-fade-in';
+            row.innerHTML = `
+                <div class="w-full sm:w-2/3 relative autocomplete-wrapper">
+                    <input type="text" required autocomplete="off" class="student-name-input w-full px-4 py-3 bg-surfaceDim sm:bg-white border sm:border-slate-200 rounded-2xl outline-none focus:border-primary focus:ring-2 focus:ring-primaryContainer transition-all text-sm font-medium" placeholder="Student Name">
+                    <ul class="autocomplete-list absolute z-20 w-full bg-surfaceContainer border border-slate-100 shadow-xl rounded-2xl hidden max-h-48 overflow-y-auto top-full mt-2 py-2"></ul>
+                </div>
+                <div class="w-full sm:w-1/3 flex gap-2">
+                    <input type="text" required class="student-grade-input w-full px-4 py-3 bg-surfaceDim sm:bg-white border sm:border-slate-200 rounded-2xl outline-none focus:border-primary focus:ring-2 focus:ring-primaryContainer transition-all text-sm font-medium" placeholder="Grade">
+                    <button type="button" onclick="removeStudentRow(this)" class="text-slate-400 hover:text-error hover:bg-errorContainer p-3 remove-student-btn flex-shrink-0 bg-white sm:bg-transparent rounded-2xl sm:border border-slate-200 transition-colors"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                </div>
+            `;
+            container.appendChild(row); lucide.createIcons();
+            const btns = document.querySelectorAll('.remove-student-btn');
+            if (btns.length === 1) btns[0].classList.add('hidden'); else btns.forEach(b => b.classList.remove('hidden'));
+        }
+        function removeStudentRow(btn) { 
+            btn.closest('.student-row').remove(); 
+            const btns = document.querySelectorAll('.remove-student-btn');
+            if (btns.length === 1) btns[0].classList.add('hidden');
+        }
+
+        function handleTypeChange() {
+            const type = document.getElementById('incidentType').value;
+            document.querySelectorAll('.protocol-block').forEach(b => b.classList.add('hidden'));
+            document.getElementById('protocolWarning').classList.add('hidden');
+            document.querySelectorAll('.protocol-check').forEach(c => { c.required = false; c.checked = false; });
+            if(type === 'Head Injury / Concussion') { document.getElementById('concussionProtocol').classList.remove('hidden'); document.querySelectorAll('.conc-check').forEach(c => c.required = true); document.getElementById('protocolWarning').classList.remove('hidden'); }
+            else if(type === 'Asthma/Breathing Issue') { document.getElementById('asthmaProtocol').classList.remove('hidden'); document.querySelectorAll('.asthma-check').forEach(c => c.required = true); document.getElementById('protocolWarning').classList.remove('hidden'); }
+            else if(type === 'Severe Allergic Reaction') { document.getElementById('allergyProtocol').classList.remove('hidden'); document.querySelectorAll('.allergy-check').forEach(c => c.required = true); document.getElementById('protocolWarning').classList.remove('hidden'); }
+            else if(type === 'Diabetic Emergency') { document.getElementById('diabeticProtocol').classList.remove('hidden'); document.querySelectorAll('.diabetic-check').forEach(c => c.required = true); document.getElementById('protocolWarning').classList.remove('hidden'); }
+        }
+
+        function setupAutocomplete() {
+            document.addEventListener('input', e => {
+                if (e.target.classList.contains('student-name-input')) {
+                    const val = e.target.value.toLowerCase().trim(); 
+                    const list = e.target.closest('.autocomplete-wrapper').querySelector('.autocomplete-list'); 
+                    list.innerHTML = '';
+                    if (!val) { list.classList.add('hidden'); return; }
+
+                    const queryWords = val.split(/\s+/);
+                    const matches = rosterData.filter(s => {
+                        const lowerName = s.name.toLowerCase();
+                        return queryWords.every(w => lowerName.includes(w));
+                    }).slice(0, 5);
+
+                    if (matches.length > 0) {
+                        matches.forEach(m => {
+                            const li = document.createElement('li'); li.className = 'px-5 py-2.5 hover:bg-surfaceDim cursor-pointer text-sm font-medium transition-colors';
+                            li.innerHTML = `<strong class="text-slate-800">${m.name}</strong> <span class="text-slate-400 ml-1 font-normal">- Grade ${m.grade}</span>`;
+                            li.onmousedown = (ev) => { ev.preventDefault(); e.target.value = m.name; e.target.closest('.student-row').querySelector('.student-grade-input').value = m.grade; list.classList.add('hidden'); };
+                            list.appendChild(li);
+                        });
+                        list.classList.remove('hidden');
+                    } else { list.classList.add('hidden'); }
+                }
+            });
+            document.addEventListener('focusout', e => { if (e.target.classList.contains('student-name-input')) { setTimeout(() => { const list = e.target.closest('.autocomplete-wrapper')?.querySelector('.autocomplete-list'); if (list) list.classList.add('hidden'); }, 150); } });
+        }
+
+        document.getElementById('incidentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!CONFIG_URL) return showToast('Setup Required! Add URL in Settings.', 'error');
+            const btn = document.getElementById('submitBtn'); const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Saving...'; btn.disabled = true;
+            
+            const students = []; document.querySelectorAll('.student-row').forEach(row => { students.push({ name: row.querySelector('.student-name-input').value, grade: row.querySelector('.student-grade-input').value }); });
+            let protocolDetails = "N/A"; const incidentType = document.getElementById('incidentType').value;
+            if (incidentType === 'Head Injury / Concussion') { protocolDetails = Array.from(document.querySelectorAll('.conc-check')).every(c => c.checked) ? "Concussion checks normal" : "WARNING: Failed concussion check(s)"; }
+            else if (incidentType === 'Asthma/Breathing Issue') { protocolDetails = Array.from(document.querySelectorAll('.asthma-check')).every(c => c.checked) ? "Asthma protocol complete" : "WARNING: Asthma protocol incomplete"; }
+            else if (incidentType === 'Severe Allergic Reaction') { protocolDetails = Array.from(document.querySelectorAll('.allergy-check')).every(c => c.checked) ? "Allergy protocol complete" : "WARNING: Allergy protocol incomplete"; }
+            else if (incidentType === 'Diabetic Emergency') { protocolDetails = Array.from(document.querySelectorAll('.diabetic-check')).every(c => c.checked) ? "Diabetic protocol complete" : "WARNING: Diabetic protocol incomplete"; }
+            
+            const payload = {
+                incidentTime: document.getElementById('incidentTime').value, students: students, schoolLocation: document.getElementById('schoolLocation').value,
+                incidentType: incidentType, location: document.getElementById('location').value, description: document.getElementById('description').value, actionTaken: document.getElementById('actionTaken').value,
+                parentContacted: document.getElementById('parentContacted').value, additionalNotes: document.getElementById('additionalNotes').value, followUp: document.getElementById('followUpFlag').checked, concussionDetails: protocolDetails
+            };
+            
+            fetch(CONFIG_URL, { method: 'POST', body: JSON.stringify(payload) })
+            .then(res => res.json())
+            .then(data => {
+                if (data.result === 'error') throw new Error(data.error);
+                showToast(`Saved ${students.length} record(s).`, 'success');
+                document.getElementById('incidentForm').reset(); document.getElementById('studentContainer').innerHTML = ''; addStudentRow(); handleTypeChange();
+                clearAnatSelection(); document.getElementById('incidentTime').value = new Date().toTimeString().slice(0, 5);
+                silentFetchLogs(); 
+            }).catch(err => { showToast('Save failed. Check script URL.', 'error'); console.error(err); })
+            .finally(() => { btn.innerHTML = originalHtml; btn.disabled = false; lucide.createIcons(); });
+        });
+
+        // ------------------ TIMERS & DASHBOARD ------------------
+        let timers = []; let timerInterval;
+        function toggleTimerDrawer() {
+            const drawer = document.getElementById('timerDrawer'); const overlay = document.getElementById('drawerOverlay');
+            if (drawer.classList.contains('drawer-closed')) { drawer.classList.replace('drawer-closed', 'drawer-open'); overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.remove('opacity-0'), 10); } 
+            else { drawer.classList.replace('drawer-open', 'drawer-closed'); overlay.classList.add('opacity-0'); setTimeout(() => overlay.classList.add('hidden'), 300); }
+        }
+        function addTimer(minutes) {
+            const name = document.getElementById('timerNameInput').value.trim() || `Student ${timers.length + 1}`; timers.push({ id: Date.now(), name, endTime: new Date().getTime() + (minutes * 60000), alerted: false });
+            document.getElementById('timerNameInput').value = ''; saveTimers(); renderTimers(); if(!timerInterval) timerInterval = setInterval(checkTimers, 1000); showToast(`${minutes}m timer started`, 'info');
+        }
+        function removeTimer(id) { timers = timers.filter(t => t.id !== id); saveTimers(); renderTimers(); if(timers.length === 0) clearInterval(timerInterval); }
+        function checkTimers() { const now = new Date().getTime(); timers.forEach(t => { if (now >= t.endTime && !t.alerted) { t.alerted = true; showToast(`Time up for ${t.name}!`, 'error'); } }); renderTimers(); }
+        function renderTimers() {
+            const container = document.getElementById('activeTimersContainer'); const badge = document.getElementById('timerBadge');
+            if (timers.length === 0) { container.innerHTML = '<p class="text-sm text-slate-400 text-center font-medium mt-4">No active resting timers.</p>'; badge.classList.add('hidden'); return; }
+            badge.innerText = timers.length; badge.classList.remove('hidden'); container.innerHTML = ''; const now = new Date().getTime();
+            timers.forEach(t => {
+                const rem = t.endTime - now; let timeStr = "00:00"; let cls = "border-indigo-100 bg-primaryContainer"; let txtCls = "text-onPrimaryContainer";
+                if (rem > 0) { const m = Math.floor((rem % 3600000) / 60000); const s = Math.floor((rem % 60000) / 1000); timeStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`; if(rem < 60000) { cls = "border-orange-200 bg-orange-50"; txtCls = "text-orange-700"; } } 
+                else { cls = "border-red-200 bg-errorContainer animate-pulse"; txtCls = "text-onErrorContainer font-bold"; timeStr = "TIME UP"; }
+                container.innerHTML += `<div class="p-4 border rounded-2xl flex justify-between items-center shadow-sm ${cls}"><div class="truncate mr-2"><p class="font-extrabold text-sm text-slate-800 truncate">${t.name}</p><p class="text-xs font-bold ${txtCls}">${timeStr}</p></div><button onclick="removeTimer(${t.id})" class="text-slate-400 hover:text-primary bg-white/50 rounded-full p-2"><i data-lucide="check" class="w-5 h-5"></i></button></div>`;
+            }); lucide.createIcons();
+        }
+        function saveTimers() { localStorage.setItem('medilog_timers', JSON.stringify(timers)); }
+        function restoreTimers() { const saved = JSON.parse(localStorage.getItem('medilog_timers')); if (saved && saved.length > 0) { timers = saved.filter(t => (new Date().getTime() - t.endTime) < 3600000); if(timers.length > 0) { renderTimers(); timerInterval = setInterval(checkTimers, 1000); } } }
+
+        let locationChartInstance = null; let timeChartInstance = null;
+        function loadDashboardData() {
+            if (!CONFIG_URL) return showToast("Configure URL first.", "error");
+            const btn = document.getElementById('refreshDashBtn'); const originalHTML = btn.innerHTML; btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>';
+            document.getElementById('ai-status').classList.remove('hidden'); document.getElementById('ai-result').classList.add('hidden');
+            fetch(CONFIG_URL + '?action=getLogs').then(res => res.json()).then(logs => {
+                if (logs.error) throw new Error(logs.error); allLogsCache = logs; applyDateFilter(); showToast("Dashboard Synced", "success"); if(typeof brain !== 'undefined') runAIForecast(logs);
+            }).catch(err => showToast("Failed to pull data.", "error")).finally(() => { btn.innerHTML = originalHTML; lucide.createIcons(); });
+        }
+        function applyDateFilter() {
+            if(!allLogsCache.length) return renderDashboard([]);
+            const startInput = document.getElementById('filterStart').valueAsDate; const endInput = document.getElementById('filterEnd').valueAsDate;
+            let filtered = allLogsCache;
+            if (startInput && endInput) { const endOfDay = new Date(endInput); endOfDay.setHours(23, 59, 59); filtered = allLogsCache.filter(l => { const d = new Date(l.date); return d >= startInput && d <= endOfDay; }); }
+            renderDashboard(filtered);
+        }
+        function renderDashboard(logs) {
+            const emptyState = document.getElementById('dashEmptyState');
+            if (!logs || logs.length === 0) { emptyState.classList.remove('hidden'); document.getElementById('statTotal').innerText = "0"; return; }
+            emptyState.classList.add('hidden'); document.getElementById('statTotal').innerText = logs.length;
+            let illnessCount = 0; const typeCounts = {}; const locCounts = {};
+            logs.forEach(l => { const t = l.type || 'Unknown'; const loc = l.schoolLocation || 'Other'; if(t.includes('Illness')) illnessCount++; typeCounts[t] = (typeCounts[t] || 0) + 1; locCounts[loc] = (locCounts[loc] || 0) + 1; });
+            document.getElementById('statIllness').innerText = illnessCount; document.getElementById('statTopType').innerText = Object.keys(typeCounts).sort((a,b)=>typeCounts[b]-typeCounts[a])[0] || '--';
+            const outbreakBanner = document.getElementById('outbreakBanner'); outbreakBanner.classList.add('hidden'); const twoDaysAgo = new Date(); twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+            const recentIllnesses = logs.filter(l => l.type && l.type.includes('Illness') && new Date(l.date) > twoDaysAgo);
+            if(recentIllnesses.length >= 3) {
+                const gradeMap = {}; recentIllnesses.forEach(l => { if(l.grade) gradeMap[l.grade] = (gradeMap[l.grade] || 0) + 1; });
+                for (const grade in gradeMap) { if(gradeMap[grade] >= 3) { document.getElementById('outbreakText').innerText = `${gradeMap[grade]} students in Grade ${grade} reported illness in the last 48 hours.`; outbreakBanner.classList.remove('hidden'); break; } }
+            }
+            const followUpContainer = document.getElementById('followUpContainer'); const followUpSection = document.getElementById('followUpSection'); followUpContainer.innerHTML = '';
+            const pendingFollowUps = allLogsCache.filter(l => l.followUp === 'Yes' && new Date(l.date) > twoDaysAgo);
+            if (pendingFollowUps.length > 0) {
+                followUpSection.classList.remove('hidden');
+                pendingFollowUps.forEach(f => { followUpContainer.innerHTML += `<div class="bg-errorContainer border border-red-200 p-4 rounded-3xl shadow-sm"><div class="flex justify-between items-start"><h4 class="font-extrabold text-onErrorContainer">${f.name} <span class="text-xs font-bold text-red-700/70">(${f.grade})</span></h4><span class="text-[10px] font-bold text-white bg-error px-2.5 py-1 rounded-full uppercase tracking-wider">${new Date(f.date).toLocaleDateString()}</span></div><p class="text-sm font-medium text-onErrorContainer/80 mt-2 truncate">${f.type}</p></div>`; });
+            } else { followUpSection.classList.add('hidden'); }
+            if (locationChartInstance) locationChartInstance.destroy();
+            locationChartInstance = new Chart(document.getElementById('locationChart').getContext('2d'), { type: 'doughnut', data: { labels: Object.keys(locCounts), datasets: [{ data: Object.values(locCounts), backgroundColor: ['#4f46e5', '#818cf8', '#c7d2fe', '#312e81', '#1e1b4b', '#6366f1'], borderWidth: 0, hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels:{boxWidth:12, usePointStyle: true, font:{size:11, family: 'Inter', weight: 'bold'}} } }, cutout: '70%' } });
+            const hourCounts = Array(11).fill(0); const hourLabels = ['8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm'];
+            logs.forEach(l => { if (l.time) { const match = l.time.match(/(\d+)/); if (match) { let hour = parseInt(match[0]); if(l.time.toLowerCase().includes('pm') && hour < 12) hour += 12; if (hour >= 8 && hour <= 18) hourCounts[hour - 8]++; } } });
+            if (timeChartInstance) timeChartInstance.destroy();
+            timeChartInstance = new Chart(document.getElementById('timeChart').getContext('2d'), { type: 'bar', data: { labels: hourLabels, datasets: [{ label: 'Incidents', data: hourCounts, backgroundColor: '#4f46e5', borderRadius: 8, borderSkipped: false }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: {display: false} }, x: {grid: {display: false}} }, plugins: {legend:{display:false}} } });
+            const cal = document.getElementById('githubCalendar'); cal.innerHTML = ''; const dateMap = {};
+            allLogsCache.forEach(l => { const dateStr = new Date(l.date).toDateString(); dateMap[dateStr] = (dateMap[dateStr] || 0) + 1; }); const today = new Date();
+            for (let i = 153; i >= 0; i--) {
+                const d = new Date(); d.setDate(today.getDate() - i); const count = dateMap[d.toDateString()] || 0;
+                let colorClass = 'cal-0'; if (count === 1) colorClass = 'cal-1'; else if (count === 2) colorClass = 'cal-2'; else if (count === 3) colorClass = 'cal-3'; else if (count >= 4) colorClass = 'cal-4';
+                const sq = document.createElement('div'); sq.className = `cal-square ${colorClass}`; sq.title = `${d.toLocaleDateString()}: ${count} incidents`; cal.appendChild(sq);
+            }
+            const scroller = document.getElementById('calScroll'); if(scroller) scroller.scrollLeft = scroller.scrollWidth; lucide.createIcons();
+        }
+
+        function exportPDF() {
+            showToast("Generating PDF...", "info"); const element = document.getElementById('dashboardView');
+            const btnRow = element.querySelector('.flex.flex-wrap'); btnRow.classList.add('hidden');
+            html2pdf().set({ margin: 0.5, filename: `ICS_MediLog_${new Date().toLocaleDateString().replace(/\//g,'-')}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' } }).from(element).save().then(() => { btnRow.classList.remove('hidden'); showToast("PDF Downloaded", "success"); });
+        }
+        function fetchRoster(silent = false) {
+            if (!CONFIG_URL) return;
+            fetch(CONFIG_URL).then(res => res.json()).then(data => { 
+                if (Array.isArray(data)) { 
+                    rosterData = getDeduplicatedRoster(data); 
+                    localStorage.setItem('medilog_roster', JSON.stringify(rosterData)); 
+                    if(!silent) showToast(`Synced ${rosterData.length} students.`, 'success'); 
+                } 
+            });
+        }
+    </script>
+</body>
+</html>
