@@ -178,7 +178,7 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
  body,.leaf-head,.leaf-content,.emergency{background:white;color:black}
  .leaf-head .eyebrow,.emergency{color:black}
  .top,footer,.language-controls,.translation-note,.skip,.booklet-inside>.leaf-head,.screen-emergency{display:none}
- .detail{margin:0;width:100%;max-width:none}
+ .detail{display:none!important}
  .booklet-outside,.booklet-inside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
  .booklet-outside{break-after:page}
  .booklet-cover,.inside-right{padding-left:8mm}
