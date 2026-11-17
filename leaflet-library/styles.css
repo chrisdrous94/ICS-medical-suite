@@ -229,3 +229,74 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
  .print-outside .booklet-cover p,.print-outside .booklet-cover h2,.print-outside .cover-russian{color:#000!important}
  .print-language-panel .notes-help{display:none}
 }
+
+/* Professional leaflet layout */
+@media screen{
+ body{background:#eef3f9}
+ .top{box-shadow:0 2px 12px #10254a12}
+ .detail{width:min(1120px,calc(100% - 3rem));max-width:none;margin:2rem auto 4rem}
+ .leaf-actions{margin-bottom:1.25rem;padding:.75rem 1rem;background:#fff;border:1px solid var(--line);border-radius:1rem;box-shadow:0 6px 18px #10254a0b}
+ .leaf-actions .back{color:var(--navy);font-size:.95rem}
+ .leaf-actions .back:hover{color:var(--blue)}
+ .language-controls{color:var(--navy)}
+ .booklet-inside{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;align-items:start}
+ .leaf-head{grid-column:1/-1;padding:2rem 2.25rem;background:linear-gradient(135deg,#0f49af 0%,#123b88 100%);border-radius:1.25rem;box-shadow:0 10px 25px #10254a20}
+ .leaf-head h1{max-width:25ch}
+ .leaf-head>p:last-child{max-width:72ch;line-height:1.45}
+ .bilingual-head{margin-top:1.35rem;padding:1.15rem 1.25rem 0;border-top:1px solid #ffffff70}
+ .bilingual-head .translation-label{color:#0f49af;margin-bottom:.35rem}
+ .bilingual-head .eyebrow,.bilingual-head h2,.bilingual-head>p:last-child{color:var(--navy)}
+ .bilingual-head h2{font-size:1.55rem;margin:.15rem 0 .4rem}
+ .screen-emergency{grid-column:1/-1;margin:0}
+ .screen-emergency .emergency{margin:0;box-shadow:0 4px 12px #732e2a12}
+ .inside-left,.inside-right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+ .leaf-content{margin:0;padding:1.25rem 1.35rem;border-radius:1rem;box-shadow:0 5px 16px #10254a0b}
+ .leaf-content h2{color:var(--blue);font-size:1.35rem;border-bottom:2px solid #d9e7f7;padding-bottom:.5rem;margin-bottom:.75rem}
+ .leaf-content h3{color:var(--navy);font-size:1.05rem}
+ .leaf-content p,.leaf-content li{line-height:1.5}
+ .russian-copy{margin-top:1rem;padding:.9rem 1rem;background:#f5f9ff;border:1px solid #cbdcf2;border-left:4px solid #7ca7da;border-radius:.7rem}
+ .russian-copy .translation-label{color:var(--blue);margin-bottom:.45rem}
+ .russian-copy h3,.russian-copy h4{color:var(--navy)}
+ .emergency-copy{border-top:1px solid #e1aaa2;color:#732e2a}
+ .danger{background:#fffafa;border-left:5px solid #b7473f}
+ .danger h2{color:#8b2c2a;border-color:#edc2bd}
+}
+
+@media print{
+ @page{size:A4 landscape;margin:8mm}
+ .print-bilingual{font-family:Jost,Arial,sans-serif;line-height:1.22}
+ .print-outside,.print-inside{height:194mm;min-height:194mm;max-height:194mm}
+ .print-outside{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6mm;padding:0}
+ .print-outside .booklet-back{border:1px solid #d0d0d0}
+ .print-outside .booklet-cover{height:194mm;padding:8mm;border:1.2px solid #000;gap:3mm}
+ .print-outside .cover-logo{width:38mm}
+ .print-outside .booklet-cover p{font-size:9pt;letter-spacing:.04em;text-transform:uppercase}
+ .print-outside .booklet-cover h2{font-size:22pt;line-height:1.05;max-width:80mm}
+ .print-outside .cover-russian{font-size:13pt}
+ .print-outside .cover-mascot{height:78mm}
+ .print-inside{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6mm;align-items:stretch}
+ .print-language-panel{height:194mm;min-height:194mm;max-height:194mm;gap:1.7mm;overflow:hidden}
+ .print-panel-head{padding:3mm 4mm;border:1.2px solid #000;border-radius:2mm}
+ .print-panel-head .eyebrow{font-size:6.5pt;letter-spacing:.12em;margin-bottom:1mm}
+ .print-panel-head h1{font-size:16pt;line-height:1.05}
+ .print-panel-head>p:not(.eyebrow){font-size:7.3pt;line-height:1.15;margin-top:1mm}
+ .print-language-panel .print-emergency{display:block}
+ .print-language-panel .emergency{display:flex;align-items:center;gap:1.5mm;margin:0;padding:2mm 2.3mm;border:1px solid #333;border-radius:2mm;background:#fff;color:#111;font-size:7.1pt;line-height:1.15}
+ .print-language-panel .alert-icon{width:6mm;height:6mm;background:#fff;border:1px solid #333}
+ .print-language-panel .emergency a{margin-left:auto;padding:1mm 2mm;border:1px solid #000;background:#fff;color:#000;font-size:7pt}
+ .print-language-panel .leaf-content{margin:0;padding:2.2mm 2.5mm;border:1px solid #555;border-radius:2mm;background:#fff}
+ .print-language-panel .leaf-content h2{font-size:10.5pt;line-height:1.05;margin-bottom:1mm;padding-bottom:.8mm;border-bottom:1px solid #777;color:#000}
+ .print-language-panel .leaf-content h3{font-size:8.2pt;line-height:1.05;margin:1.2mm 0 .4mm;color:#000}
+ .print-language-panel .leaf-content p,.print-language-panel .leaf-content li{font-size:7.15pt;line-height:1.16;color:#111}
+ .print-language-panel .leaf-content p+p{margin-top:1mm}
+ .print-language-panel .care-list,.print-language-panel .paper-checklist{font-size:7.15pt;line-height:1.16;margin-top:.6mm}
+ .print-language-panel .care-list li+li{margin-top:.4mm}
+ .print-language-panel .paper-checklist li{gap:1.2mm}
+ .print-language-panel .paper-checklist li::before{border-color:#000}
+ .print-language-panel .notes-label{margin-top:1.2mm;font-size:7pt!important;font-weight:700;color:#000}
+ .print-language-panel .note-lines{min-height:9mm;border-bottom:1px solid #555}
+ .print-language-panel .note-lines::before{height:4mm;border-bottom:1px solid #999}
+ .print-language-panel .danger{border-left:3px solid #000;background:#fff}
+ .print-language-panel .danger h2{color:#000;border-color:#777}
+ .print-language-panel .russian-copy{display:none}
+}
