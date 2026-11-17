@@ -84,10 +84,26 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
 .foot-links{display:flex;gap:.35rem 1rem;flex-wrap:wrap;margin-top:.45rem}
 .detail{max-width:850px;margin-block:1.8rem 3rem}
 .back{display:inline-block;margin-bottom:1rem;font-weight:700}
-.leaf-actions{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:1rem}
+.leaf-actions{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
 .leaf-actions .back{margin-bottom:0}
 .print-button{border:0;border-radius:999px;background:var(--blue);color:white;padding:.5rem 1rem;font-weight:700}
 .print-button:hover{background:#0d367d}
+.language-controls{display:flex;align-items:center;gap:.4rem;color:var(--muted);font-size:.85rem;font-weight:700}
+.language-controls button{border:1px solid #b8cbe7;background:#fff;border-radius:999px;padding:.4rem .75rem;font-weight:700}
+.language-controls button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.translation-note{flex-basis:100%;margin:0;color:#7b5a18;font-size:.8rem}
+.translation-label{margin:0 0 .35rem;color:var(--blue);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.russian-copy{margin-top:1rem;padding-top:.85rem;border-top:1px dashed #b8cbe7}
+.bilingual-head{margin-top:1.25rem;padding:1rem 0 0;border-top:1px solid #96ccff70}
+.bilingual-head h2{font-size:1.55rem;margin:.2rem 0 .4rem}
+.russian-copy h3,.russian-copy h4{margin:.55rem 0 .35rem;line-height:1.15}
+.russian-copy h4{font-size:1rem}
+.russian-copy p{font-size:1rem;max-width:68ch}
+.russian-copy .care-list{margin:.35rem 0 0}
+.emergency-copy{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;margin-top:.45rem;padding-top:.45rem;border-top:1px dashed #e7b5ae;color:#732e2a}
+.emergency-copy strong{font-size:.92rem}
+.emergency-copy span{font-size:.9rem}
+.emergency-copy a{margin-left:auto;background:#962e2e;color:#fff;border-radius:999px;padding:.35rem .7rem;text-decoration:none;font-weight:700}
 .booklet-outside,.print-emergency{display:none}
 .leaf-head{padding:clamp(1.3rem,4vw,2.6rem);background:var(--blue);color:white;border-radius:1.4rem}
 .leaf-head .eyebrow{color:#d7e9ff;margin-bottom:.65rem}
@@ -134,7 +150,7 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
  @page{size:A4 landscape;margin:10mm}
  body,.leaf-head,.leaf-content,.emergency{background:white;color:black}
  .leaf-head .eyebrow,.emergency{color:black}
- .top,footer,.leaf-actions,.skip,.booklet-inside>.leaf-head,.screen-emergency{display:none}
+ .top,footer,.language-controls,.translation-note,.skip,.booklet-inside>.leaf-head,.screen-emergency{display:none}
  .detail{margin:0;width:100%;max-width:none}
  .booklet-outside,.booklet-inside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
  .booklet-outside{break-after:page}
@@ -144,6 +160,7 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
  .cover-logo{width:39mm;height:auto}
  .booklet-cover p{font-weight:700;color:#0f49af}
  .booklet-cover h2{font-size:26pt;max-width:115mm}
+.cover-russian{margin:0;color:var(--navy)!important;font-size:16pt;border-top:0;padding-top:0}
  .cover-mascot{height:85mm;width:auto}
  .print-emergency{display:block}
  .leaf-content,.emergency{padding:.6rem .72rem}
