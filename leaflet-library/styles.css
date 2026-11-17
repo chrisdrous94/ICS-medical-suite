@@ -91,7 +91,6 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
 .language-controls{display:flex;align-items:center;gap:.4rem;color:var(--muted);font-size:.85rem;font-weight:700}
 .language-controls button{border:1px solid #b8cbe7;background:#fff;border-radius:999px;padding:.4rem .75rem;font-weight:700}
 .language-controls button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
-.translation-note{flex-basis:100%;margin:0;color:#7b5a18;font-size:.8rem}
 .translation-label{margin:0 0 .35rem;color:var(--blue);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .russian-copy{margin-top:1rem;padding-top:.85rem;border-top:1px dashed #b8cbe7}
 .bilingual-head{margin-top:1.25rem;padding:1rem 0 0;border-top:1px solid #96ccff70}
@@ -157,7 +156,6 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
  .print-side-head .eyebrow{color:#d7e9ff;margin-bottom:1.5mm}
  .print-side-head h1{font-size:20pt;letter-spacing:-.035em}
  .print-side-head>p:not(.eyebrow){margin-top:1mm;font-size:9.5pt;line-height:1.2}
- .print-review-note{font-size:7.5pt!important;color:#fff!important;border-top:1px solid #96ccff70;padding-top:1mm}
  .print-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;align-items:start;flex:1}
  .print-columns>.inside-left,.print-columns>.inside-right{display:flex;flex-direction:column;gap:2.5mm}
  .print-columns>.inside-left .leaf-content,.print-columns>.inside-right .leaf-content{margin-top:0;padding:3mm}
@@ -177,7 +175,7 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
  @page{size:A4 landscape;margin:10mm}
  body,.leaf-head,.leaf-content,.emergency{background:white;color:black}
  .leaf-head .eyebrow,.emergency{color:black}
- .top,footer,.language-controls,.translation-note,.skip,.booklet-inside>.leaf-head,.screen-emergency{display:none}
+ .top,footer,.language-controls,.skip,.booklet-inside>.leaf-head,.screen-emergency{display:none}
  .detail{display:none!important}
  .booklet-outside,.booklet-inside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
  .booklet-outside{break-after:page}
@@ -204,6 +202,7 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
 
 @media print{
  .print-bilingual{display:block!important}
+ body,.print-bilingual{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  .print-outside,.print-inside{width:100%;min-height:190mm}
  .print-outside{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));break-after:page}
  .print-outside .booklet-back{display:block}
@@ -214,15 +213,19 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
  .print-panel-head .eyebrow{color:#d7e9ff;margin-bottom:1.5mm}
  .print-panel-head h1{font-size:17pt;letter-spacing:-.035em}
  .print-panel-head>p:not(.eyebrow){margin-top:.6mm;font-size:7.6pt;line-height:1.08}
- .print-panel-head .print-review-note{font-size:6.5pt!important;color:#fff!important;border-top:1px solid #96ccff70;padding-top:.7mm}
+ .print-panel-head{color:#000!important;background:#fff!important;border:1.5px solid #000}
+ .print-panel-head .eyebrow,.print-panel-head h1,.print-panel-head>p{color:#000!important}
  .print-language-panel .leaf-content{margin-top:0;padding:2.2mm}
- .print-language-panel .leaf-content p{font-size:7.6pt;line-height:1.08}
+ .print-language-panel .leaf-content{border-color:#555;color:#111}
+ .print-language-panel .leaf-content p,.print-language-panel .leaf-content li{font-size:7.6pt;line-height:1.08;color:#111}
+ .print-language-panel .leaf-content h2,.print-language-panel .leaf-content h3,.print-language-panel .notes-label{color:#000}
  .print-language-panel .leaf-content h2{font-size:11pt}
  .print-language-panel .leaf-content h3{font-size:8.7pt;margin:.7mm 0 .3mm}
- .print-language-panel .care-list,.print-language-panel .paper-checklist{font-size:7.4pt;line-height:1.08}
+ .print-language-panel .care-list,.print-language-panel .paper-checklist{font-size:7.4pt;line-height:1.08;color:#111}
  .print-language-panel .care-list li+li{margin-top:.25mm}
  .print-language-panel .print-emergency{display:block;margin-top:0}
- .print-language-panel .emergency{margin-top:0;padding:2.2mm 2.6mm;font-size:7.6pt}
- .print-language-panel .emergency a{padding:.3rem .55rem}
+ .print-language-panel .emergency{margin-top:0;padding:2.2mm 2.6mm;font-size:7.6pt;color:#111;border-color:#555}
+ .print-language-panel .emergency a{padding:.3rem .55rem;color:#000;border:1px solid #000}
+ .print-outside .booklet-cover p,.print-outside .booklet-cover h2,.print-outside .cover-russian{color:#000!important}
  .print-language-panel .notes-help{display:none}
 }
