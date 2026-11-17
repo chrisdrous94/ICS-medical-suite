@@ -57,7 +57,7 @@ const russianTranslations = {
     what: 'Что мы сделали', note: 'Сотрудники школы могут отметить оказанную помощь на распечатанной памятке.',
     actions: ['Приложили холодный компресс, обёрнутый тканью.', 'Наблюдали за симптомами после удара.', 'Обеспечили спокойный отдых.'],
     home: 'Уход дома', homeLists: [['Если домашнее наблюдение допустимо, взрослый должен находиться рядом с ребёнком не менее 24 часов.', 'Позвольте ребёнку отдыхать и спать, если он устал. Избегайте физической нагрузки. Уточните у врача, когда можно вернуться к физкультуре и контактным видам спорта.', 'При отёке на короткое время прикладывайте к месту удара холодный компресс, обёрнутый полотенцем.', 'При лёгкой головной боли можно использовать детский парацетамол, если он подходит ребёнку. Следуйте инструкции на упаковке.']],
-    homeHeadings: [], red: 'Опасные признаки', redParagraphs: ['Позвоните по номеру 112 сейчас, если ребёнок:', 'Позвоните по номеру 112 после удара на высокой скорости или падения с высоты более 1 метра или 5 ступеней.', 'Срочно обратитесь за медицинской помощью, если ребёнка рвёт, у него кружится голова или появляется усиливающаяся либо не проходящая головная боль.'], redLists: [['Очень сонный, его трудно разбудить или у него судороги.', 'Выглядит растерянным, ведёт себя необычно, ему трудно говорить, понимать вас, видеть или ходить.', 'Из уха идёт кровь или из носа либо ушей выделяется прозрачная жидкость.']]
+    homeHeadings: [], red: 'Опасные признаки', redParagraphs: ['Позвоните по номеру 112 сейчас, если ребёнок:', 'Позвоните по номеру 112 после удара на высокой скорости или падения с высоты более 1 метра или 5 ступеней.', 'Срочно обратитесь за медицинской помощью, если ребёнка рвёт, у него кружится голова или появляется усиливающаяся либо не проходящая головная боль.'], redListAfterParagraphIndex: 1, redLists: [['Очень сонный, его трудно разбудить или у него судороги.', 'Выглядит растерянным, ведёт себя необычно, ему трудно говорить, понимать вас, видеть или ходить.', 'Из уха идёт кровь или из носа либо ушей выделяется прозрачная жидкость.']]
   },
   'nosebleed.html': {
     eyebrow: 'Травмы · Памятка школы', title: 'Носовое кровотечение',
@@ -153,6 +153,25 @@ function makeRussianList(items) {
   return list;
 }
 
+function appendRedFlags(container) {
+  const paragraphs = translation.redParagraphs || [];
+  const lists = translation.redLists || [];
+  const splitAt = translation.redListAfterParagraphIndex;
+  const before = splitAt === undefined ? paragraphs : paragraphs.slice(0, splitAt);
+  const after = splitAt === undefined ? [] : paragraphs.slice(splitAt);
+  before.forEach(paragraph => {
+    const element = document.createElement('p');
+    element.textContent = paragraph;
+    container.appendChild(element);
+  });
+  lists.forEach(items => container.appendChild(makeRussianList(items)));
+  after.forEach(paragraph => {
+    const element = document.createElement('p');
+    element.textContent = paragraph;
+    container.appendChild(element);
+  });
+}
+
 function renderBilingual() {
   if (!translation) return;
   removeRussianCopies();
@@ -196,12 +215,7 @@ function renderBilingual() {
   const redCopy = document.createElement('div');
   redCopy.className = 'russian-copy';
   redCopy.innerHTML = `<p class="translation-label">Русский</p><h3>${translation.red}</h3>`;
-  (translation.redParagraphs || []).forEach(paragraph => {
-    const element = document.createElement('p');
-    element.textContent = paragraph;
-    redCopy.appendChild(element);
-  });
-  (translation.redLists || []).forEach(items => redCopy.appendChild(makeRussianList(items)));
+  appendRedFlags(redCopy);
   redSection.appendChild(redCopy);
 
   document.querySelectorAll('.emergency').forEach(emergency => {
@@ -271,12 +285,7 @@ function buildRussianPrintSide() {
   const red = document.createElement('section');
   red.className = 'leaf-content danger';
   red.innerHTML = `<h2>${translation.red}</h2>`;
-  (translation.redParagraphs || []).forEach(paragraph => {
-    const element = document.createElement('p');
-    element.textContent = paragraph;
-    red.appendChild(element);
-  });
-  (translation.redLists || []).forEach(items => red.appendChild(makeRussianList(items)));
+  appendRedFlags(red);
   right.appendChild(red);
   columns.appendChild(right);
 
@@ -337,12 +346,7 @@ function buildLanguagePanel(language) {
   const red = document.createElement('section');
   red.className = 'leaf-content danger';
   red.innerHTML = `<h2>${translation.red}</h2>`;
-  (translation.redParagraphs || []).forEach(paragraph => {
-    const element = document.createElement('p');
-    element.textContent = paragraph;
-    red.appendChild(element);
-  });
-  (translation.redLists || []).forEach(items => red.appendChild(makeRussianList(items)));
+  appendRedFlags(red);
   panel.appendChild(red);
   return panel;
 }
