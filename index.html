@@ -131,6 +131,12 @@
             #incidentForm { padding:1rem; }
             #incidentForm > div:not(:last-child) { padding:1rem; }
         }
+        @media print {
+            body * { visibility:hidden !important; }
+            #dailySummaryCard, #dailySummaryCard * { visibility:visible !important; }
+            #dailySummaryCard { position:absolute; left:0; top:0; width:100%; box-shadow:none !important; border:0 !important; }
+            #dailySummaryCard button { display:none !important; }
+        }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col relative pb-20 md:pb-0">
@@ -257,6 +263,22 @@
                                 </div>
                             </div>
                             <div class="md:col-span-2">
+                                <div class="mb-4 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4">
+                                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                        <div>
+                                            <label for="clinicalTemplate" class="block text-xs font-black uppercase tracking-widest text-onPrimaryContainer">Quick clinical template</label>
+                                            <p class="mt-1 text-xs font-medium text-slate-500">Prefills the incident type and action so you can focus on the clinical details.</p>
+                                        </div>
+                                        <select id="clinicalTemplate" onchange="applyClinicalTemplate(this.value)" class="w-full sm:w-64 rounded-xl border border-indigo-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-primaryContainer">
+                                            <option value="">Choose a template...</option>
+                                            <option value="head-injury">Head injury</option>
+                                            <option value="asthma">Asthma / breathing issue</option>
+                                            <option value="anaphylaxis">Severe allergic reaction</option>
+                                            <option value="vomiting">Vomiting / diarrhoea</option>
+                                            <option value="minor-wound">Minor wound</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <label class="block text-sm font-bold text-slate-700 mb-1.5 pl-1">Incident Type *</label>
                                 <select id="incidentType" required onchange="handleTypeChange()" class="w-full px-4 py-3 rounded-2xl outline-none text-sm">
                                     <option value="" disabled selected>Select type...</option>
@@ -435,6 +457,25 @@
                     </button>
                 </div>
             </div>
+
+            <section id="dailySummaryCard" class="bg-surfaceContainer p-5 md:p-6 rounded-4xl border border-indigo-100 shadow-sm">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-primary">Clinician handover</p>
+                        <h2 class="mt-1 text-xl font-extrabold text-slate-900">Today’s summary</h2>
+                        <p id="dailySummaryDate" class="mt-1 text-sm font-medium text-slate-500">No records loaded yet.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="copyDailySummary()" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-xs font-extrabold text-slate-700 hover:border-primary hover:text-primary"><i data-lucide="copy" class="h-4 w-4"></i> Copy summary</button>
+                        <button onclick="printDailySummary()" class="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-xs font-extrabold text-white hover:bg-onPrimaryContainer"><i data-lucide="printer" class="h-4 w-4"></i> Print</button>
+                    </div>
+                </div>
+                <div id="dailySummaryStats" class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4"></div>
+                <div class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
+                    <div class="rounded-2xl bg-surfaceDim p-4"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Most common issue</p><p id="dailySummaryTopIssue" class="mt-2 text-sm font-extrabold text-slate-800">—</p></div>
+                    <div class="rounded-2xl bg-surfaceDim p-4"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Follow-up attention</p><p id="dailySummaryFollowUp" class="mt-2 text-sm font-extrabold text-slate-800">—</p></div>
+                </div>
+            </section>
 
             <div id="followUpSection" class="hidden">
                 <h3 class="text-sm font-bold text-error uppercase tracking-widest mb-4 flex items-center gap-2 pl-2"><i data-lucide="clipboard-list" class="w-5 h-5"></i> Pending Follow-ups (48hrs)</h3>
@@ -786,6 +827,37 @@
                         <button onclick="fetchRoster()" class="w-full sm:w-auto px-6 py-3 text-sm font-bold bg-surface text-slate-700 hover:bg-slate-100 rounded-full border border-slate-200">Sync Roster</button>
                     </div>
                 </div>
+                <div class="border-t border-slate-100 pt-6">
+                    <h4 class="text-sm font-extrabold text-slate-800">Clinician defaults</h4>
+                    <p class="mt-1 text-xs font-medium text-slate-500">These preferences stay on this device and speed up your daily workflow.</p>
+                    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <label class="text-xs font-bold text-slate-600">Default template
+                            <select id="defaultTemplateInput" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-surfaceDim px-3 py-2.5 text-sm font-medium text-slate-700">
+                                <option value="">None</option>
+                                <option value="head-injury">Head injury</option>
+                                <option value="asthma">Asthma / breathing issue</option>
+                                <option value="anaphylaxis">Severe allergic reaction</option>
+                                <option value="vomiting">Vomiting / diarrhoea</option>
+                                <option value="minor-wound">Minor wound</option>
+                            </select>
+                        </label>
+                        <label class="text-xs font-bold text-slate-600">Default school area
+                            <input id="defaultAreaInput" type="text" placeholder="e.g. Clinic / Office" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-surfaceDim px-3 py-2.5 text-sm font-medium text-slate-700">
+                        </label>
+                        <label class="text-xs font-bold text-slate-600">Default parent contact
+                            <select id="defaultParentContactInput" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-surfaceDim px-3 py-2.5 text-sm font-medium text-slate-700">
+                                <option value="No - Not Required">No - Not Required</option>
+                                <option value="Yes - Spoke to Parent">Yes - Spoke to Parent</option>
+                                <option value="Yes - Left Message">Yes - Left Message</option>
+                                <option value="Tried - Unreachable">Tried - Unreachable</option>
+                            </select>
+                        </label>
+                        <label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-surfaceDim p-3 text-xs font-bold text-slate-600">
+                            <input id="defaultFollowUpInput" type="checkbox" class="h-5 w-5 rounded text-primary focus:ring-primaryContainer">
+                            Default new records to follow-up tomorrow
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="p-5 border-t border-slate-100 bg-surface flex justify-end gap-3 rounded-b-4xl">
                 <button onclick="closeModal('settingsModal')" class="px-6 py-3 text-sm text-slate-600 hover:bg-slate-200 rounded-full font-bold">Cancel</button>
@@ -836,10 +908,12 @@
             setupAutocomplete();
             restoreTimers(); 
             initClinicalList();
+            loadClinicianSettings();
             
             const end = new Date(); const start = new Date(); start.setDate(end.getDate() - 30);
             document.getElementById('filterEnd').valueAsDate = end; 
             document.getElementById('filterStart').valueAsDate = start;
+            renderDailySummary();
 
             document.getElementById('att-csv-upload')?.addEventListener('change', (e) => handleAttUpload(e, 'current'));
             document.getElementById('att-baseline-upload')?.addEventListener('change', (e) => handleAttUpload(e, 'baseline'));
@@ -903,6 +977,10 @@
         function saveSettings() {
             CONFIG_URL = document.getElementById('scriptUrlInput').value.trim();
             localStorage.setItem('medilog_script_url', CONFIG_URL);
+            localStorage.setItem('medilog_default_template', document.getElementById('defaultTemplateInput').value);
+            localStorage.setItem('medilog_default_area', document.getElementById('defaultAreaInput').value.trim());
+            localStorage.setItem('medilog_default_parent', document.getElementById('defaultParentContactInput').value);
+            localStorage.setItem('medilog_default_followup', document.getElementById('defaultFollowUpInput').checked ? '1' : '0');
             if(CONFIG_URL) {
                 document.getElementById('setupWarning').classList.add('hidden');
                 silentFetchLogs(); 
@@ -911,12 +989,50 @@
             closeModal('settingsModal');
         }
 
+        const clinicalTemplates = {
+            'head-injury': { type: 'Head Injury / Concussion', action: 'Rest in Clinic' },
+            'asthma': { type: 'Asthma/Breathing Issue', action: 'Administered Medication' },
+            'anaphylaxis': { type: 'Severe Allergic Reaction', action: 'EMS / Ambulance Called' },
+            'vomiting': { type: 'Illness (Fever/Vomiting)', action: 'Rest in Clinic' },
+            'minor-wound': { type: 'Minor Injury (Scrape/Cut)', action: 'Bandaged / Cleaned Wound' }
+        };
+
+        function applyClinicalTemplate(key) {
+            const template = clinicalTemplates[key];
+            if (!template) return;
+            document.getElementById('incidentType').value = template.type;
+            document.getElementById('actionTaken').value = template.action;
+            handleTypeChange();
+            if (document.getElementById('clinicalTemplate')) document.getElementById('clinicalTemplate').value = key;
+        }
+
+        function loadClinicianSettings() {
+            const template = localStorage.getItem('medilog_default_template') || '';
+            const area = localStorage.getItem('medilog_default_area') || '';
+            const parent = localStorage.getItem('medilog_default_parent') || 'No - Not Required';
+            const followUp = localStorage.getItem('medilog_default_followup') === '1';
+            const urlInput = document.getElementById('scriptUrlInput');
+            if (urlInput) urlInput.value = CONFIG_URL;
+            document.getElementById('defaultTemplateInput').value = template;
+            document.getElementById('defaultAreaInput').value = area;
+            document.getElementById('defaultParentContactInput').value = parent;
+            document.getElementById('defaultFollowUpInput').checked = followUp;
+            if (area) document.getElementById('schoolLocation').value = area;
+            document.getElementById('parentContacted').value = parent;
+            document.getElementById('followUpFlag').checked = followUp;
+            if (template) applyClinicalTemplate(template);
+        }
+
         // ------------------ 360 STUDENT PROFILE & GLOBAL SEARCH ------------------
         function openStudentSearchModal() {
             document.getElementById('globalStudentSearch').value = '';
-            document.getElementById('studentSearchResults').innerHTML = '<div class="p-8 text-center text-slate-400 text-sm font-medium">Type a name to search Roster, Medical, and Attendance records.</div>';
+            handleStudentSearchInput();
             openModal('studentSearchModal');
             setTimeout(() => document.getElementById('globalStudentSearch').focus(), 100);
+            if (CONFIG_URL && allLogsCache.length === 0) {
+                silentFetchLogs();
+                setTimeout(() => handleStudentSearchInput(), 700);
+            }
         }
 
         function handleStudentSearchInput() {
@@ -925,7 +1041,18 @@
             resultsContainer.innerHTML = '';
             
             if(!query) {
-                resultsContainer.innerHTML = '<div class="p-8 text-center text-slate-400 text-sm font-medium">Type a name to search Roster, Medical, and Attendance records.</div>';
+                const recent = allLogsCache
+                    .slice()
+                    .sort((a,b) => new Date(b.date) - new Date(a.date))
+                    .filter((log, index, logs) => log.name && logs.findIndex(item => getNormKey(item.name) === getNormKey(log.name)) === index)
+                    .slice(0, 6);
+                resultsContainer.innerHTML = recent.length
+                    ? '<p class="px-3 pb-2 pt-1 text-[10px] font-black uppercase tracking-widest text-slate-400">Recent students</p>'
+                    : '<div class="p-8 text-center text-slate-400 text-sm font-medium">Type a name to search Roster, Medical, and Attendance records.</div>';
+                recent.forEach(m => {
+                    resultsContainer.innerHTML += `<div class="flex items-center gap-4 p-3 hover:bg-surfaceDim cursor-pointer rounded-2xl transition-colors mb-1" onclick="closeModal('studentSearchModal'); viewStudentProfile('${m.name.replace(/'/g, "\\'")}', '${m.grade || ''}')"><div class="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 text-primary flex items-center justify-center font-black flex-shrink-0">${m.name.charAt(0).toUpperCase()}</div><div class="flex-grow"><div class="font-bold text-slate-800">${m.name}</div><div class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-0.5">Grade ${m.grade || '--'}</div></div><i data-lucide="chevron-right" class="w-5 h-5 text-slate-300"></i></div>`;
+                });
+                lucide.createIcons();
                 return;
             }
 
@@ -1633,8 +1760,54 @@
             if (startInput && endInput) { const endOfDay = new Date(endInput); endOfDay.setHours(23, 59, 59); filtered = allLogsCache.filter(l => { const d = new Date(l.date); return d >= startInput && d <= endOfDay; }); }
             renderDashboard(filtered);
         }
+
+        function getTodayLogs() {
+            const today = new Date();
+            return allLogsCache.filter(log => {
+                const date = new Date(log.date);
+                return !Number.isNaN(date.getTime()) && date.toDateString() === today.toDateString();
+            });
+        }
+
+        function renderDailySummary() {
+            const logs = getTodayLogs();
+            const date = new Intl.DateTimeFormat(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
+            document.getElementById('dailySummaryDate').textContent = `${date} · ${logs.length} record${logs.length === 1 ? '' : 's'} recorded`;
+            const illness = logs.filter(log => (log.type || '').includes('Illness')).length;
+            const injuries = logs.filter(log => (log.type || '').includes('Injury') || (log.type || '').includes('Fracture') || (log.type || '').includes('Sprain')).length;
+            const followUps = logs.filter(log => log.followUp === 'Yes').length;
+            const typeCounts = {};
+            logs.forEach(log => { const type = log.type || 'Other'; typeCounts[type] = (typeCounts[type] || 0) + 1; });
+            const topIssue = Object.keys(typeCounts).sort((a,b) => typeCounts[b] - typeCounts[a])[0] || 'No incidents recorded';
+            document.getElementById('dailySummaryStats').innerHTML = [
+                ['Records', logs.length, 'text-primary'],
+                ['Illness', illness, 'text-error'],
+                ['Injuries', injuries, 'text-orange-600'],
+                ['Follow-up', followUps, 'text-purple-700']
+            ].map(([label, value, color]) => `<div class="rounded-2xl border border-slate-100 bg-white p-4"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">${label}</p><p class="mt-1 text-2xl font-black ${color}">${value}</p></div>`).join('');
+            document.getElementById('dailySummaryTopIssue').textContent = topIssue;
+            document.getElementById('dailySummaryFollowUp').textContent = followUps ? `${followUps} student${followUps === 1 ? '' : 's'} need follow-up.` : 'No follow-up flagged today.';
+        }
+
+        function getDailySummaryText() {
+            const logs = getTodayLogs();
+            const illness = logs.filter(log => (log.type || '').includes('Illness')).length;
+            const injuries = logs.filter(log => (log.type || '').includes('Injury') || (log.type || '').includes('Fracture') || (log.type || '').includes('Sprain')).length;
+            const followUps = logs.filter(log => log.followUp === 'Yes').length;
+            return `ICS Medical Suite — Daily summary\n${new Date().toLocaleDateString()}\nRecords: ${logs.length}\nIllness: ${illness}\nInjuries: ${injuries}\nFollow-up required: ${followUps}`;
+        }
+
+        function copyDailySummary() {
+            const text = getDailySummaryText();
+            if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => showToast('Daily summary copied.', 'success')).catch(() => showToast('Copy was blocked by the browser.', 'error'));
+            else showToast('Copy is not available in this browser.', 'error');
+        }
+
+        function printDailySummary() { window.print(); }
+
         function renderDashboard(logs) {
             const emptyState = document.getElementById('dashEmptyState');
+            renderDailySummary();
             if (!logs || logs.length === 0) { emptyState.classList.remove('hidden'); document.getElementById('statTotal').innerText = "0"; return; }
             emptyState.classList.add('hidden'); document.getElementById('statTotal').innerText = logs.length;
             let illnessCount = 0; const typeCounts = {}; const locCounts = {};
