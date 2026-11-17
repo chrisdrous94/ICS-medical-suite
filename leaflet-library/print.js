@@ -286,29 +286,81 @@ function buildRussianPrintSide() {
   return side;
 }
 
+function buildLanguagePanel(language) {
+  const russian = language === 'ru';
+  const panel = document.createElement('section');
+  panel.className = `print-language-panel print-${language}`;
+
+  if (!russian) {
+    const head = document.querySelector('.leaf-head').cloneNode(true);
+    head.className = 'print-panel-head';
+    head.querySelectorAll('.russian-copy').forEach(element => element.remove());
+    panel.appendChild(head);
+    const emergency = document.querySelector('.inside-right .print-emergency')?.cloneNode(true);
+    if (emergency) panel.appendChild(emergency);
+    const what = document.querySelector('.inside-left .leaf-content:first-child').cloneNode(true);
+    const home = document.querySelector('.inside-left .leaf-content:nth-child(2)').cloneNode(true);
+    const red = document.querySelector('.inside-right .danger').cloneNode(true);
+    [what, home, red].forEach(section => {
+      section.querySelectorAll('.russian-copy').forEach(element => element.remove());
+      panel.appendChild(section);
+    });
+    return panel;
+  }
+
+  const head = document.createElement('header');
+  head.className = 'print-panel-head';
+  head.innerHTML = `<p class="eyebrow">${translation.eyebrow}</p><h1>${translation.title}</h1><p>${translation.intro}</p><p class="print-review-note">Перевод на русский язык является черновиком и требует проверки квалифицированным двуязычным врачом.</p>`;
+  panel.appendChild(head);
+  panel.appendChild(makePrintEmergency('ru'));
+
+  const what = document.createElement('section');
+  what.className = 'leaf-content';
+  what.innerHTML = `<h2>${translation.what}</h2><p>${translation.note}</p>`;
+  const actions = makeRussianList(translation.actions);
+  actions.className = 'paper-checklist';
+  what.appendChild(actions);
+  what.insertAdjacentHTML('beforeend', '<p class="notes-label">Время происшествия и дополнительные заметки</p><div class="note-lines" aria-hidden="true"></div>');
+  panel.appendChild(what);
+
+  const home = document.createElement('section');
+  home.className = 'leaf-content';
+  home.innerHTML = `<h2>${translation.home}</h2>`;
+  translation.homeLists.forEach((items, index) => {
+    if (index > 0 && translation.homeHeadings[index - 1]) {
+      const heading = document.createElement('h3');
+      heading.textContent = translation.homeHeadings[index - 1];
+      home.appendChild(heading);
+    }
+    home.appendChild(makeRussianList(items));
+  });
+  panel.appendChild(home);
+
+  const red = document.createElement('section');
+  red.className = 'leaf-content danger';
+  red.innerHTML = `<h2>${translation.red}</h2>`;
+  (translation.redParagraphs || []).forEach(paragraph => {
+    const element = document.createElement('p');
+    element.textContent = paragraph;
+    red.appendChild(element);
+  });
+  (translation.redLists || []).forEach(items => red.appendChild(makeRussianList(items)));
+  panel.appendChild(red);
+  return panel;
+}
+
 function buildPrintableBilingual() {
   if (!translation) return;
   document.querySelector('.print-bilingual')?.remove();
   const printable = document.createElement('div');
   printable.className = 'print-bilingual';
 
-  const english = document.createElement('section');
-  english.className = 'print-side print-english';
-  const head = document.createElement('header');
-  head.className = 'print-side-head';
-  const originalHead = document.querySelector('.leaf-head').cloneNode(true);
-  originalHead.querySelectorAll('.russian-copy').forEach(element => element.remove());
-  head.innerHTML = originalHead.innerHTML;
-  english.appendChild(head);
-  const columns = document.createElement('div');
-  columns.className = 'print-columns';
-  const left = document.querySelector('.inside-left').cloneNode(true);
-  const right = document.querySelector('.inside-right').cloneNode(true);
-  left.querySelectorAll('.russian-copy').forEach(element => element.remove());
-  right.querySelectorAll('.russian-copy').forEach(element => element.remove());
-  columns.append(left, right);
-  english.appendChild(columns);
-  printable.append(english, buildRussianPrintSide());
+  const outside = document.querySelector('.booklet-outside').cloneNode(true);
+  outside.className = 'print-outside';
+  const inside = document.createElement('div');
+  inside.className = 'print-inside';
+  inside.append(buildLanguagePanel('en'), buildLanguagePanel('ru'));
+  printable.append(outside, inside);
   document.body.appendChild(printable);
 }
 

@@ -201,3 +201,28 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
  .leaf-content,.emergency{break-inside:avoid}
  .emergency a{background:white;color:black}
 }
+
+@media print{
+ .print-bilingual{display:block!important}
+ .print-outside,.print-inside{width:100%;min-height:190mm}
+ .print-outside{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));break-after:page}
+ .print-outside .booklet-back{display:block}
+ .print-outside .booklet-cover{display:flex;height:185mm;padding-left:8mm}
+ .print-inside{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8mm;break-after:auto;align-items:start}
+ .print-language-panel{display:flex;flex-direction:column;gap:1.5mm;min-width:0;min-height:190mm;width:100%;zoom:1}
+ .print-panel-head{padding:3mm 4mm;background:var(--blue);color:white;border-radius:3mm}
+ .print-panel-head .eyebrow{color:#d7e9ff;margin-bottom:1.5mm}
+ .print-panel-head h1{font-size:17pt;letter-spacing:-.035em}
+ .print-panel-head>p:not(.eyebrow){margin-top:.6mm;font-size:7.6pt;line-height:1.08}
+ .print-panel-head .print-review-note{font-size:6.5pt!important;color:#fff!important;border-top:1px solid #96ccff70;padding-top:.7mm}
+ .print-language-panel .leaf-content{margin-top:0;padding:2.2mm}
+ .print-language-panel .leaf-content p{font-size:7.6pt;line-height:1.08}
+ .print-language-panel .leaf-content h2{font-size:11pt}
+ .print-language-panel .leaf-content h3{font-size:8.7pt;margin:.7mm 0 .3mm}
+ .print-language-panel .care-list,.print-language-panel .paper-checklist{font-size:7.4pt;line-height:1.08}
+ .print-language-panel .care-list li+li{margin-top:.25mm}
+ .print-language-panel .print-emergency{display:block;margin-top:0}
+ .print-language-panel .emergency{margin-top:0;padding:2.2mm 2.6mm;font-size:7.6pt}
+ .print-language-panel .emergency a{padding:.3rem .55rem}
+ .print-language-panel .notes-help{display:none}
+}
