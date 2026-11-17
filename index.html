@@ -92,6 +92,45 @@
             background-color: theme('colors.slate.200'); z-index: 0;
         }
         .profile-timeline-item:last-child .profile-timeline-line::before { display: none; }
+
+        /* Clinician workspace polish */
+        body { color: #17233d; background: #f3f6fb; }
+        #mainHeader { border-bottom: 1px solid #e5eaf2; box-shadow: 0 4px 18px rgba(23,35,61,.06); }
+        #mainHeader .max-w-7xl { min-height: 76px; }
+        #mainContent { max-width: 1280px; }
+        #formView { max-width: 1100px; }
+        .clinician-intro { display:flex; align-items:flex-end; justify-content:space-between; gap:2rem; padding:1.5rem 1.65rem; border:1px solid #dbe4f0; border-radius:1.5rem; background:linear-gradient(135deg,#ffffff 0%,#f5f8fd 100%); box-shadow:0 10px 28px rgba(23,35,61,.07); }
+        .clinician-kicker { margin:0 0 .4rem; color:#4f46e5; font-size:.72rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+        .clinician-intro h2 { margin:0; color:#17233d; font-size:clamp(1.45rem,2.3vw,2rem); font-weight:800; letter-spacing:-.03em; }
+        .clinician-intro-copy { max-width:39rem; margin:.45rem 0 0; color:#5d6b82; font-size:.94rem; line-height:1.5; }
+        .clinician-intro-side { min-width:270px; padding-left:1.5rem; border-left:1px solid #dbe4f0; }
+        .clinician-date-label { display:block; color:#7a8799; font-size:.7rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+        #workspaceDate { display:block; margin-top:.25rem; color:#17233d; font-size:1rem; }
+        .clinician-quick-actions { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.9rem; }
+        .clinician-quick-actions button { display:inline-flex; align-items:center; gap:.4rem; padding:.55rem .75rem; border:1px solid #cbd8ea; border-radius:.7rem; background:#fff; color:#27426b; font-size:.75rem; font-weight:800; transition:all .2s ease; }
+        .clinician-quick-actions button:hover { border-color:#4f46e5; color:#4f46e5; background:#f7f7ff; transform:translateY(-1px); }
+        #formView > .bg-surfaceContainer { border:1px solid #dbe4f0; border-radius:1.5rem; box-shadow:0 14px 34px rgba(23,35,61,.08); }
+        #formView > .bg-surfaceContainer > div:first-child { padding:1.35rem 1.65rem; background:#fbfcff; }
+        #formView > .bg-surfaceContainer > div:first-child h2 { color:#17233d; text-transform:none; letter-spacing:-.02em; }
+        .form-header-copy { margin-top:.22rem; color:#718096; font-size:.78rem; font-weight:500; }
+        #incidentForm { padding:1.65rem; }
+        #incidentForm > div:not(:last-child) { padding:1.25rem; border:1px solid #e1e8f2; border-radius:1.15rem; background:#fff; box-shadow:0 4px 14px rgba(23,35,61,.035); }
+        #incidentForm > div:not(:last-child) > div:first-child h3 { color:#334f7b; letter-spacing:.11em; }
+        #incidentForm label { color:#34435d; }
+        #incidentForm input[type="text"],#incidentForm input[type="time"],#incidentForm select,#incidentForm textarea { border:1px solid #d8e1ee; background:#f8fafd; color:#17233d; }
+        #incidentForm input[type="text"]:hover,#incidentForm input[type="time"]:hover,#incidentForm select:hover,#incidentForm textarea:hover { border-color:#aebfd8; }
+        #incidentForm input:focus,#incidentForm select:focus,#incidentForm textarea:focus { border-color:#4f46e5; background:#fff; box-shadow:0 0 0 4px #e0e7ff; }
+        #leafletRecommendation { border-radius:1rem; box-shadow:0 5px 16px rgba(79,70,229,.08); }
+        #submitBtn { min-height:52px; border-radius:.85rem; box-shadow:0 8px 18px rgba(79,70,229,.2); }
+        #dashboardView > div:first-child,#attendanceView > div:first-child { border-radius:1.5rem; box-shadow:0 12px 28px rgba(23,35,61,.1); }
+        #dashboardView .bg-surfaceContainer,#attendanceView .bg-surfaceContainer { border-color:#dbe4f0; border-radius:1.15rem; box-shadow:0 6px 18px rgba(23,35,61,.05); }
+        #timerFAB { border-radius:1rem; box-shadow:0 10px 24px rgba(23,35,61,.18); }
+        @media (max-width: 700px) {
+            .clinician-intro { align-items:flex-start; flex-direction:column; gap:1.2rem; padding:1.25rem; }
+            .clinician-intro-side { width:100%; min-width:0; padding:1rem 0 0; border-top:1px solid #dbe4f0; border-left:0; }
+            #incidentForm { padding:1rem; }
+            #incidentForm > div:not(:last-child) { padding:1rem; }
+        }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col relative pb-20 md:pb-0">
@@ -105,7 +144,7 @@
                 </div>
                 <div class="flex flex-col justify-center">
                     <h1 class="font-extrabold text-lg md:text-xl text-slate-900 tracking-tight leading-tight">I CAN SCHOOL</h1>
-                    <span class="text-[10px] md:text-xs font-semibold text-primary tracking-widest uppercase">Health & Safety</span>
+                    <span class="text-[10px] md:text-xs font-semibold text-primary tracking-widest uppercase">Clinician workspace</span>
                 </div>
             </div>
             
@@ -152,6 +191,21 @@
         
         <!-- MEDICAL LOG FORM TAB -->
         <div id="formView" class="space-y-6 relative max-w-4xl mx-auto">
+            <section id="clinicianIntro" class="clinician-intro" aria-labelledby="clinicianIntroTitle">
+                <div>
+                    <p class="clinician-kicker">Private medical suite</p>
+                    <h2 id="clinicianIntroTitle">Ready to log today’s care?</h2>
+                    <p class="clinician-intro-copy">Capture the essentials once, keep follow-up visible, and open the matching patient leaflet when you need it.</p>
+                </div>
+                <div class="clinician-intro-side">
+                    <span class="clinician-date-label">Today</span>
+                    <strong id="workspaceDate">--</strong>
+                    <div class="clinician-quick-actions">
+                        <button type="button" onclick="switchTab('dashboardView')"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Review dashboard</button>
+                        <button type="button" onclick="toggleTimerDrawer()"><i data-lucide="timer" class="w-4 h-4"></i> Resting timers</button>
+                    </div>
+                </div>
+            </section>
             <div id="setupWarning" class="hidden bg-errorContainer border-l-4 border-error p-4 rounded-2xl shadow-sm flex items-start gap-3">
                 <i data-lucide="alert-triangle" class="w-5 h-5 text-onErrorContainer flex-shrink-0 mt-0.5"></i>
                 <div><h3 class="text-sm font-bold text-onErrorContainer">Connection Missing</h3><p class="text-sm text-onErrorContainer mt-1">Please connect the Google Sheet database in Settings to save data.</p></div>
@@ -160,7 +214,7 @@
             <div class="bg-surfaceContainer rounded-4xl shadow-sm border border-slate-100 overflow-visible">
                 <div class="px-6 py-5 border-b border-slate-100/50 flex items-center gap-3">
                     <div class="bg-primaryContainer text-primary p-2 rounded-xl"><i data-lucide="clipboard-plus" class="w-5 h-5"></i></div>
-                    <h2 class="text-xl font-bold text-slate-800">New Incident Report</h2>
+                    <div><h2 class="text-xl font-bold text-slate-800">New incident record</h2><p class="form-header-copy">Complete the required fields, then save the record to your private log.</p></div>
                 </div>
 
                 <form id="incidentForm" class="p-6 sm:p-8 space-y-10">
@@ -270,7 +324,7 @@
                                     <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check allergy-check w-5 h-5 text-error rounded-md border-red-300"> Assessed for swelling (face/throat)</label>
                                     <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check allergy-check w-5 h-5 text-error rounded-md border-red-300"> Administered EpiPen/Antihistamine</label>
                                     <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check allergy-check w-5 h-5 text-error rounded-md border-red-300"> Logged time of administration</label>
-                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check allergy-check w-5 h-5 text-error rounded-md border-red-300"> EMS / 911 notified immediately</label>
+                                    <label class="flex items-center gap-3"><input type="checkbox" class="protocol-check allergy-check w-5 h-5 text-error rounded-md border-red-300"> EMS / 112 notified immediately</label>
                                 </div>
                             </div>
                             <div id="diabeticProtocol" class="hidden bg-purple-50 border border-purple-200 rounded-3xl p-5 mt-2 animate-fade-in protocol-block">
@@ -1629,6 +1683,17 @@
                 } 
             });
         }
+        function updateWorkspaceDate() {
+            const target = document.getElementById('workspaceDate');
+            if (!target) return;
+            target.textContent = new Intl.DateTimeFormat(undefined, {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }).format(new Date());
+        }
+        updateWorkspaceDate();
     </script>
 </body>
 </html>
