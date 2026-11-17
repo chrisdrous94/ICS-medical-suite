@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Patient information leaflets | ICan School</title>
+<link rel="stylesheet" href="styles.css">
+<script src="app.js" defer></script>
+</head><body><a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap top-inner">
+<a class="brand" href="index.html"><img src="assets/school.svg" alt="ICan School" width="200" height="120"></a>
+<nav aria-label="Main navigation"><a href="../index.html">Medical suite</a><a aria-current="page" href="index.html">Leaflet library</a><a href="https://icanskill.com/school">School website <span aria-hidden="true">↗</span></a></nav>
+</div></header>
+<main id="main" class="wrap">
+<section class="hero" aria-labelledby="title">
+<div class="hero-copy"><p class="eyebrow">ICan School · Parent resources</p><h1 id="title">Patient information<br class="wide"> leaflets</h1><p>Find guidance on common school injuries and illnesses, what to look out for and when to get medical help.</p><a class="hero-link" href="#browse">Browse leaflets <span aria-hidden="true">↓</span></a></div>
+<div class="hero-art"><span class="ring"></span><span class="spark one" aria-hidden="true">✦</span><span class="spark two" aria-hidden="true">✦</span><span class="orb"></span><img src="assets/mascot.png" alt="ICan School mascot" width="969" height="2048"></div>
+</section>
+<aside class="emergency" aria-label="Emergency help"><span class="alert-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span><div><strong>Life-threatening emergency?</strong><span> Call an ambulance in Cyprus.</span></div><a href="tel:112">Call 112</a></aside>
+<section class="library" id="browse" aria-labelledby="browse-title">
+<div class="intro"><h2 id="browse-title">Find a leaflet</h2><p>Search by symptom, injury or condition.</p></div>
+<div id="filters" hidden>
+<div class="controls"><label class="search"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><span class="sr-only">Search leaflets</span><input id="query" type="search" placeholder="Try head bump, nosebleed or asthma"></label><button id="clear" class="secondary" type="button" hidden>Clear search</button></div>
+<div id="categories" class="chips" role="group" aria-label="Filter by category">
+<button type="button" data-filter="" aria-pressed="true">All topics</button><button type="button" data-filter="Injuries" aria-pressed="false">Injuries</button><button type="button" data-filter="Allergies &amp; breathing" aria-pressed="false">Allergies &amp; breathing</button><button type="button" data-filter="Illness" aria-pressed="false">Illness</button><button type="button" data-filter="Urgent incidents" aria-pressed="false">Urgent incidents</button><button type="button" data-filter="Other references" aria-pressed="false">Other references</button></div>
+<div class="collection" role="group" aria-label="Choose a collection"><button type="button" data-view="school" aria-pressed="true">School guides <span>(15)</span></button><button type="button" data-view="nhs" aria-pressed="false">NHS references <span>(48)</span></button></div>
+<p class="status" id="status" role="status"></p>
+<p class="empty" id="empty" hidden>Try a different search or choose All topics.</p>
+</div>
+<section id="school" aria-labelledby="school-title"><h3 class="sr-only" id="school-title">School guides</h3><p class="notice"><strong>Drafts for clinical review.</strong> These original school guides provide general information. Follow your child’s care plan and advice from their healthcare team.</p><ul class="grid"><li class="card" data-collection="school" data-category="Injuries" data-search="concussion bump fall sports Bumps to the head, possible concussion and signs to watch for.">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="leaflets/head-injury.html">Head Injury &amp; Bumps</a></h3>
+<p class="summary">Bumps to the head, possible concussion and signs to watch for.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Injuries" data-search="scrape wound laceration stitches plaster Minor wounds, bleeding and signs of infection.">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="leaflets/cuts-and-grazes.html">Cuts and grazes</a></h3>
+<p class="summary">Minor wounds, bleeding and signs of infection.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Injuries" data-search="ankle sports knee swelling limp twisted Twisted ankles and injuries during play or PE.">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="leaflets/sprains-and-strains.html">Sprains and strains</a></h3>
+<p class="summary">Twisted ankles and injuries during play or PE.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Injuries" data-search="hot water blister heat chemical electrical Injuries from hot liquids, steam or hot surfaces.">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="leaflets/burns-and-scalds.html">Burns and scalds</a></h3>
+<p class="summary">Injuries from hot liquids, steam or hot surfaces.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Injuries" data-search="nose epistaxis bleeding How to help a child with a bleeding nose.">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="leaflets/nosebleed.html">Nosebleeds</a></h3>
+<p class="summary">How to help a child with a bleeding nose.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Injuries" data-search="vision rinse splash foreign body Dust, chemicals or a blow to the eye.">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="leaflets/eye-injury.html">Eye injuries</a></h3>
+<p class="summary">Dust, chemicals or a blow to the eye.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Injuries" data-search="dental mouth permanent baby tooth What to do if a child loses a tooth after an injury.">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="leaflets/tooth-injury.html">Knocked-out tooth</a></h3>
+<p class="summary">What to do if a child loses a tooth after an injury.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Injuries" data-search="bone fracture wrist arm elbow broken fall Pain and swelling after a fall or collision.">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="leaflets/suspected-fracture.html">Suspected broken arm or wrist</a></h3>
+<p class="summary">Pain and swelling after a fall or collision.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Allergies &amp; breathing" data-search="allergy anaphylaxis epipen adrenaline swelling Recognising possible anaphylaxis after food, medicine or a sting.">
+<span class="tile c1"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a2 2 0 1 1-2 2M3 16h8a2 2 0 1 1-2 2"/></svg></span>
+<div><p class="category">Allergies &amp; breathing</p><h3><a href="leaflets/anaphylaxis.html">Severe allergic reaction</a></h3>
+<p class="summary">Recognising possible anaphylaxis after food, medicine or a sting.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Allergies &amp; breathing" data-search="wheeze breathing inhaler spacer cough Wheezing, breathlessness or a tight chest in a child with asthma.">
+<span class="tile c1"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a2 2 0 1 1-2 2M3 16h8a2 2 0 1 1-2 2"/></svg></span>
+<div><p class="category">Allergies &amp; breathing</p><h3><a href="leaflets/asthma.html">Asthma attack</a></h3>
+<p class="summary">Wheezing, breathlessness or a tight chest in a child with asthma.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Allergies &amp; breathing" data-search="bee wasp sting insect mosquito bite Local swelling, itching and signs of an allergic reaction.">
+<span class="tile c1"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a2 2 0 1 1-2 2M3 16h8a2 2 0 1 1-2 2"/></svg></span>
+<div><p class="category">Allergies &amp; breathing</p><h3><a href="leaflets/bites-and-stings.html">Insect bites and stings</a></h3>
+<p class="summary">Local swelling, itching and signs of an allergic reaction.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Urgent incidents" data-search="overdose cleaning product ingestion substance Possible exposure to medicines or chemicals.">
+<span class="tile c3"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span>
+<div><p class="category">Urgent incidents</p><h3><a href="leaflets/poisoning.html">Suspected poisoning</a></h3>
+<p class="summary">Possible exposure to medicines or chemicals.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Urgent incidents" data-search="button battery magnet ingestion foreign body coin What to do if a child may have swallowed a small object.">
+<span class="tile c3"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span>
+<div><p class="category">Urgent incidents</p><h3><a href="leaflets/swallowed-object.html">Swallowed battery, magnet or object</a></h3>
+<p class="summary">What to do if a child may have swallowed a small object.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Urgent incidents" data-search="epilepsy convulsion shaking fit Keeping a child safe during a seizure and when to call for help.">
+<span class="tile c3"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span>
+<div><p class="category">Urgent incidents</p><h3><a href="leaflets/seizure.html">Seizure or fit</a></h3>
+<p class="summary">Keeping a child safe during a seizure and when to call for help.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li>
+<li class="card" data-collection="school" data-category="Illness" data-search="stomach bug puke loose stools gastroenteritis dehydration Hydration, warning signs and planning a return to school.">
+<span class="tile c2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/><rect x="2" y="3" width="20" height="18" rx="5"/></svg></span>
+<div><p class="category">Illness</p><h3><a href="leaflets/vomiting-diarrhoea.html">Vomiting and diarrhoea</a></h3>
+<p class="summary">Hydration, warning signs and planning a return to school.</p></div>
+<span class="arrow" aria-hidden="true">→</span>
+</li></ul></section>
+<section id="nhs" aria-labelledby="nhs-title"><h3 id="nhs-title">Mid Yorkshire NHS references</h3><p class="notice">These external leaflets include hospital discharge advice and UK service numbers. For emergencies in Cyprus, call 112. <a href="https://www.midyorks.nhs.uk/accident-and-emergency-patient-information-leaflets">Open the original directory</a> if a leaflet link has moved.</p><ul class="grid"><li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-17b-acute-lower-back-pain-pdf.pdf?doc=docm93jijm4n2029&amp;ver=4910">Acute lower back pain</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Urgent incidents" data-search=" ">
+<span class="tile c3"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span>
+<div><p class="category">Urgent incidents</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-25b-accidental-overdose-in-children-pdf.pdf?doc=docm93jijm4n2045&amp;ver=4926">Accidental overdose in children</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/advice-for-the-limping-childpdf.html?doc=docm93jijm4n4637.pdf&amp;ver=7953&amp;ver=9301">Advice for the limping child</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Allergies &amp; breathing" data-search=" ">
+<span class="tile c1"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a2 2 0 1 1-2 2M3 16h8a2 2 0 1 1-2 2"/></svg></span>
+<div><p class="category">Allergies &amp; breathing</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-48a-anaphylaxis-pdf.pdf?doc=docm93jijm4n2064&amp;ver=4945">Anaphylaxis</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Allergies &amp; breathing" data-search=" ">
+<span class="tile c1"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a2 2 0 1 1-2 2M3 16h8a2 2 0 1 1-2 2"/></svg></span>
+<div><p class="category">Allergies &amp; breathing</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-15b-asthmapdf.pdf?doc=docm93jijm4n2035&amp;ver=4915">Asthma</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Allergies &amp; breathing" data-search=" ">
+<span class="tile c1"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a2 2 0 1 1-2 2M3 16h8a2 2 0 1 1-2 2"/></svg></span>
+<div><p class="category">Allergies &amp; breathing</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-1b-bites-and-stings-pdf.pdf?doc=docm93jijm4n2020&amp;ver=4900">Bites and stings</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Other references" data-search=" ">
+<span class="tile c4"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6l2 2 2-2h6v15h-6l-2 2-2-2H4zM12 6v15"/></svg></span>
+<div><p class="category">Other references</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-2b-bleeding-in-early-pregnancy-pdf.pdf?doc=docm93jijm4n2031&amp;ver=4912">Bleeding in early pregnancy</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Allergies &amp; breathing" data-search=" ">
+<span class="tile c1"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a2 2 0 1 1-2 2M3 16h8a2 2 0 1 1-2 2"/></svg></span>
+<div><p class="category">Allergies &amp; breathing</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-12b-bronchiolitis-pdf.pdf?doc=docm93jijm4n2032&amp;ver=4913">Bronchiolitis</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-13b-burn-and-scald-injuries-pdf.pdf?doc=docm93jijm4n2034&amp;ver=4916">Burn and scald injuries</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Illness" data-search=" ">
+<span class="tile c2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/><rect x="2" y="3" width="20" height="18" rx="5"/></svg></span>
+<div><p class="category">Illness</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-41b-cellulitis-pdf.pdf?doc=docm93jijm4n2055&amp;ver=4935">Cellulitis</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Allergies &amp; breathing" data-search=" ">
+<span class="tile c1"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a2 2 0 1 1-2 2M3 16h8a2 2 0 1 1-2 2"/></svg></span>
+<div><p class="category">Allergies &amp; breathing</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-5b-chest-infection-pdf.pdf?doc=docm93jijm4n2025&amp;ver=4906">Chest infection</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-22b-chest-injuriespdf-.pdf?doc=docm93jijm4n2046&amp;ver=2324">Chest injuries</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Illness" data-search=" ">
+<span class="tile c2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/><rect x="2" y="3" width="20" height="18" rx="5"/></svg></span>
+<div><p class="category">Illness</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-3b-chest-painpdf.pdf?doc=docm93jijm4n2027&amp;ver=4907">Chest pain</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Allergies &amp; breathing" data-search=" ">
+<span class="tile c1"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a2 2 0 1 1-2 2M3 16h8a2 2 0 1 1-2 2"/></svg></span>
+<div><p class="category">Allergies &amp; breathing</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-21b-crouppdf.pdf?doc=docm93jijm4n2047&amp;ver=4927">Croup</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-6b-dental-problems-and-mouth-injuriespdf.pdf?doc=docm93jijm4n2024&amp;ver=4905">Dental problems and mouth injuries</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Illness" data-search=" ">
+<span class="tile c2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/><rect x="2" y="3" width="20" height="18" rx="5"/></svg></span>
+<div><p class="category">Illness</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-11b-diarrhoea-and-vomiting-in-childrenpdf.pdf?doc=docm93jijm4n2028&amp;ver=4909">Diarrhoea and vomiting in children</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Illness" data-search=" ">
+<span class="tile c2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/><rect x="2" y="3" width="20" height="18" rx="5"/></svg></span>
+<div><p class="category">Illness</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-24b-discharge-advice-for-carers-of-children-younger-than-5-years-who-have-a-fever-pdf.pdf?doc=docm93jijm4n2048&amp;ver=4929">Discharge advice for carers of children younger than 5 years who have a fever</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Urgent incidents" data-search=" ">
+<span class="tile c3"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span>
+<div><p class="category">Urgent incidents</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-51a-drink-or-needle-spiking-pdf.pdf?doc=docm93jijm4n2067&amp;ver=4948">Drink or needle spiking</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-27b-eye-conditions-pdf.pdf?doc=docm93jijm4n2039&amp;ver=4920">Eye conditions</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Urgent incidents" data-search=" ">
+<span class="tile c3"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span>
+<div><p class="category">Urgent incidents</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-14b-forgeign-body-ingestionpdf.pdf?doc=docm93jijm4n2022&amp;ver=4902">Foreign body ingestion</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-32b-hand-mobilisationpdf.pdf?doc=docm93jijm4n2060&amp;ver=4941">Hand mobilisation</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Illness" data-search=" ">
+<span class="tile c2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/><rect x="2" y="3" width="20" height="18" rx="5"/></svg></span>
+<div><p class="category">Illness</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-40b-headachespdf.pdf?doc=docm93jijm4n2053&amp;ver=4933">Headaches</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Urgent incidents" data-search=" ">
+<span class="tile c3"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span>
+<div><p class="category">Urgent incidents</p><h3><a href="https://www.midyorks.nhs.uk/download/information-following-a-suspected-first-seizurepdf.html?doc=docm93jijm4n4322.pdf&amp;ver=7287&amp;ver=7770">Information following a suspected first seizure</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/mallet-fingerpdf.pdf?doc=docm93jijm4n4905.pdf&amp;ver=8917&amp;ver=9418">Mallet finger</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-44b-minor-head-injury-adults-pdf.pdf?doc=docm93jijm4n2062&amp;ver=4949">Minor head injury (adults)</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/minor-head-injury-child-pdf.html?doc=docm93jijm4n2036.pdf&amp;ver=9895">Minor head injury (child)</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-23b-neck-inurypdf.pdf?doc=docm93jijm4n2044&amp;ver=4925">Neck injury</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Urgent incidents" data-search=" ">
+<span class="tile c3"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span>
+<div><p class="category">Urgent incidents</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-8b-needlestick-injurypdf.pdf?doc=docm93jijm4n2023&amp;ver=4904">Needlestick injury</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-7b-nose-injuries-and-nose-bleeds-epistaxispdf.pdf?doc=docm93jijm4n2030&amp;ver=4911">Nose injuries and nose bleeds (epistaxis)</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Other references" data-search=" ">
+<span class="tile c4"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6l2 2 2-2h6v15h-6l-2 2-2-2H4zM12 6v15"/></svg></span>
+<div><p class="category">Other references</p><h3><a href="https://www.midyorks.nhs.uk/download/-web-ed-46a-a5-on-line-self-help-resourcespdf-.pdf?doc=docm93jijm4n2065&amp;ver=4423">Online self help resources</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-30b-plasters-and-castspdf.pdf?doc=docm93jijm4n2051&amp;ver=4931">Plasters and casts</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Illness" data-search=" ">
+<span class="tile c2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/><rect x="2" y="3" width="20" height="18" rx="5"/></svg></span>
+<div><p class="category">Illness</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-10b-possible-deep-vein-thrombosis-dvtpdf.pdf?doc=docm93jijm4n2021&amp;ver=4901">Possible deep vein thrombosis (DVT)</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-20b-pretibial-lacerations-pdf.pdf?doc=docm93jijm4n2040&amp;ver=4924">Pretibial lacerations</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-18b-pulled-elbow-childrenpdf.pdf?doc=docm93jijm4n2038&amp;ver=4918">Pulled elbow children</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/radial-head-fracturepdf.html?doc=docm93jijm4n4646.pdf&amp;ver=8041&amp;ver=9348">Radial head fracture</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-39c-referral-to-physio-pdf.pdf?doc=docm93jijm4n2056&amp;ver=4937">Referral to physio</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-38b-rtapdf.pdf?doc=docm93jijm4n2054&amp;ver=4934">Road traffic accident (RTA)</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-31c-scaphoidpdf.pdf?doc=docm93jijm4n2052&amp;ver=4932">Scaphoid</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Other references" data-search=" ">
+<span class="tile c4"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6l2 2 2-2h6v15h-6l-2 2-2-2H4zM12 6v15"/></svg></span>
+<div><p class="category">Other references</p><h3><a href="https://www.midyorks.nhs.uk/download/-web-ed-47a-sexual-health-advice-pdf-.pdf?doc=docm93jijm4n2066&amp;ver=4424">Sexual health advice</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-34b-shoulder-injuries-and-exercisespdf.pdf?doc=docm93jijm4n2059&amp;ver=4940">Shoulder injuries and exercises</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-37b-sunburn-pdf.pdf?doc=docm93jijm4n2061&amp;ver=4944">Sunburn</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-43b-the-use-of-elbow-crutches-non-weight-bearingpdf.pdf?doc=docm93jijm4n2058&amp;ver=4939">The use of elbow crutches non weight bearing</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Urgent incidents" data-search=" ">
+<span class="tile c3"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span>
+<div><p class="category">Urgent incidents</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-9b-treatment-for-a-pneumothoraxpdf.pdf?doc=docm93jijm4n2026&amp;ver=4908">Treatment for a pneumothorax</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Illness" data-search=" ">
+<span class="tile c2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/><rect x="2" y="3" width="20" height="18" rx="5"/></svg></span>
+<div><p class="category">Illness</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-26b-urinary-tract-infection-uti-pdf.pdf?doc=docm93jijm4n2041&amp;ver=4922">Urinary tract infection (UTI)</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Urgent incidents" data-search=" ">
+<span class="tile c3"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span>
+<div><p class="category">Urgent incidents</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-50a-what-to-do-after-you-have-swallowed-a-super-strong-magnet-pdf.pdf?doc=docm93jijm4n2068&amp;ver=4950">What to do after you have swallowed a super strong magnet</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Urgent incidents" data-search=" ">
+<span class="tile c3"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5m0 3h.01M10.3 4.3 3 17a2 2 0 0 0 1.7 3h14.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg></span>
+<div><p class="category">Urgent incidents</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-49a-what-to-do-after-your-child-has-swallowed-a-super-strong-magnet-pdf.pdf?doc=docm93jijm4n2069&amp;ver=4951">What to do after your child has swallowed a super strong magnet</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-19b-wound-closure-pdf.pdf?doc=docm93jijm4n2037&amp;ver=4919">Wound closure</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li>
+<li class="card" data-collection="nhs" data-category="Injuries" data-search=" ">
+<span class="tile c0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5z"/></svg></span>
+<div><p class="category">Injuries</p><h3><a href="https://www.midyorks.nhs.uk/download/web-ed-33b-wrist-injurypdf.pdf?doc=docm93jijm4n2049&amp;ver=4928">Wrist injury</a></h3>
+<p class="summary">Mid Yorkshire Teaching NHS Trust</p></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</li></ul></section>
+</section>
+</main>
+<footer><div class="wrap foot"><img src="assets/school.svg" alt="ICan School" width="200" height="120"><div><strong>For ICan School families in Limassol</strong><p>School guides are drafts pending local clinical review. For individual advice, contact your child’s healthcare professional.</p><div class="foot-links"><a href="https://icanskill.com/contacts">School contacts</a><a href="https://www.shso.org.cy/en/plirofories-gia-asthenofora/">Cyprus Ambulance Service</a><a href="https://www.midyorks.nhs.uk/accident-and-emergency-patient-information-leaflets">Mid Yorkshire A&amp;E directory</a></div></div></div></footer></body></html>
