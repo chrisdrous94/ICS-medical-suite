@@ -104,6 +104,7 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
 .emergency-copy strong{font-size:.92rem}
 .emergency-copy span{font-size:.9rem}
 .emergency-copy a{margin-left:auto;background:#962e2e;color:#fff;border-radius:999px;padding:.35rem .7rem;text-decoration:none;font-weight:700}
+.print-bilingual{display:none}
 .booklet-outside,.print-emergency{display:none}
 .leaf-head{padding:clamp(1.3rem,4vw,2.6rem);background:var(--blue);color:white;border-radius:1.4rem}
 .leaf-head .eyebrow{color:#d7e9ff;margin-bottom:.65rem}
@@ -146,6 +147,32 @@ footer{background:#e5effd;border-top:1px solid var(--line);padding-block:1.7rem}
  .foot img{width:66px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+@media print{
+ .booklet-outside,.booklet-inside{display:none!important}
+ .print-bilingual{display:block!important}
+ .print-side{min-height:190mm;width:119%;zoom:.84;break-after:page;display:flex;flex-direction:column;gap:3mm}
+ .print-side:last-child{break-after:auto}
+ .print-side-head{padding:4mm 6mm;background:var(--blue);color:white;border-radius:4mm}
+ .print-side-head .eyebrow{color:#d7e9ff;margin-bottom:1.5mm}
+ .print-side-head h1{font-size:20pt;letter-spacing:-.035em}
+ .print-side-head>p:not(.eyebrow){margin-top:1mm;font-size:9.5pt;line-height:1.2}
+ .print-review-note{font-size:7.5pt!important;color:#fff!important;border-top:1px solid #96ccff70;padding-top:1mm}
+ .print-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;align-items:start;flex:1}
+ .print-columns>.inside-left,.print-columns>.inside-right{display:flex;flex-direction:column;gap:2.5mm}
+ .print-columns>.inside-left .leaf-content,.print-columns>.inside-right .leaf-content{margin-top:0;padding:3mm}
+ .print-columns>.inside-left .leaf-content p,.print-columns>.inside-right .leaf-content p{font-size:8.5pt}
+ .print-columns>.inside-left .leaf-content h2,.print-columns>.inside-right .leaf-content h2{font-size:12pt}
+ .print-columns>.inside-left .leaf-content h3,.print-columns>.inside-right .leaf-content h3{font-size:9.5pt;margin:1mm 0 .5mm}
+ .print-columns>.inside-left .care-list,.print-columns>.inside-right .care-list,.print-columns>.inside-left .paper-checklist,.print-columns>.inside-right .paper-checklist{font-size:8.3pt;line-height:1.15}
+ .print-columns>.inside-left .care-list li+li,.print-columns>.inside-right .care-list li+li{margin-top:.5mm}
+ .print-columns>.inside-right>.print-emergency{margin-top:0}
+ .print-columns>.inside-right>.print-emergency .emergency{margin-top:0}
+ .print-side .emergency{padding:3mm 3.5mm;font-size:8.5pt}
+ .print-side .emergency a{padding:.3rem .55rem}
+ .print-russian .print-columns>.print-side{display:block}
+ .print-russian .print-columns>div>.emergency{margin-top:0}
+}
 @media print{
  @page{size:A4 landscape;margin:10mm}
  body,.leaf-head,.leaf-content,.emergency{background:white;color:black}

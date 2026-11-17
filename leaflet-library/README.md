@@ -4,7 +4,7 @@
 
 Unzip the download, keep the folder structure intact and open `index.html` in a browser. The local guides, search, logo, mascot and fonts work offline. NHS references and other external links require internet access.
 
-Open a school guide and select **Print leaflet**. Choose **A4**, **Landscape**, and **Print on both sides** with **Flip on short edge**. Use **Actual size / 100%** and turn off browser headers and footers. Print both pages on one sheet and fold it down the middle with the logo and mascot facing out. When saving as PDF, keep both pages and use the same settings when printing the PDF.
+Open a school guide and select **Print leaflet**. Choose **A4**, **Landscape**, and **Print on both sides** with **Flip on short edge**. Use **Actual size / 100%** and turn off browser headers and footers. The English leaflet prints on the front and the Russian leaflet prints on the back of one sheet. When saving as PDF, keep both pages and use the same settings when printing the PDF.
 
 Staff can mark the care they gave under **What we did** and add the incident time and notes by hand. For an external NHS leaflet, use the NHS document viewer’s print controls.
 

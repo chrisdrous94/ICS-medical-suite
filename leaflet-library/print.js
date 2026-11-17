@@ -216,9 +216,106 @@ function renderBilingual() {
   if (note) note.textContent = 'Russian translation is a draft pending review by a qualified bilingual clinician.';
 }
 
+function makePrintEmergency(language) {
+  const aside = document.createElement('aside');
+  aside.className = 'emergency';
+  const icon = document.querySelector('.emergency .alert-icon');
+  if (icon) aside.appendChild(icon.cloneNode(true));
+  const content = document.createElement('div');
+  const russian = language === 'ru';
+  content.innerHTML = `<strong>${russian ? emergencyText.strong : 'Life-threatening emergency?'}</strong><span>${russian ? emergencyText.detail : ' Call an ambulance in Cyprus.'}</span>`;
+  aside.appendChild(content);
+  const link = document.createElement('a');
+  link.href = 'tel:112';
+  link.textContent = russian ? emergencyText.call : 'Call 112';
+  aside.appendChild(link);
+  return aside;
+}
+
+function buildRussianPrintSide() {
+  const side = document.createElement('section');
+  side.className = 'print-side print-russian';
+
+  const head = document.createElement('header');
+  head.className = 'print-side-head';
+  head.innerHTML = `<p class="eyebrow">${translation.eyebrow}</p><h1>${translation.title}</h1><p>${translation.intro}</p><p class="print-review-note">Перевод на русский язык является черновиком и требует проверки квалифицированным двуязычным врачом.</p>`;
+  side.appendChild(head);
+
+  const columns = document.createElement('div');
+  columns.className = 'print-columns';
+  const left = document.createElement('div');
+
+  const what = document.createElement('section');
+  what.className = 'leaf-content';
+  what.innerHTML = `<h2>${translation.what}</h2><p>${translation.note}</p>`;
+  const actions = makeRussianList(translation.actions);
+  actions.className = 'paper-checklist';
+  what.appendChild(actions);
+  what.insertAdjacentHTML('beforeend', '<p class="notes-label">Время происшествия и дополнительные заметки</p><div class="note-lines" aria-hidden="true"></div>');
+  left.appendChild(what);
+
+  const home = document.createElement('section');
+  home.className = 'leaf-content';
+  home.innerHTML = `<h2>${translation.home}</h2>`;
+  translation.homeLists.forEach((items, index) => {
+    if (index > 0 && translation.homeHeadings[index - 1]) {
+      const heading = document.createElement('h3');
+      heading.textContent = translation.homeHeadings[index - 1];
+      home.appendChild(heading);
+    }
+    home.appendChild(makeRussianList(items));
+  });
+  left.appendChild(home);
+  columns.appendChild(left);
+
+  const right = document.createElement('div');
+  right.appendChild(makePrintEmergency('ru'));
+  const red = document.createElement('section');
+  red.className = 'leaf-content danger';
+  red.innerHTML = `<h2>${translation.red}</h2>`;
+  (translation.redParagraphs || []).forEach(paragraph => {
+    const element = document.createElement('p');
+    element.textContent = paragraph;
+    red.appendChild(element);
+  });
+  (translation.redLists || []).forEach(items => red.appendChild(makeRussianList(items)));
+  right.appendChild(red);
+  columns.appendChild(right);
+
+  side.appendChild(columns);
+  return side;
+}
+
+function buildPrintableBilingual() {
+  if (!translation) return;
+  document.querySelector('.print-bilingual')?.remove();
+  const printable = document.createElement('div');
+  printable.className = 'print-bilingual';
+
+  const english = document.createElement('section');
+  english.className = 'print-side print-english';
+  const head = document.createElement('header');
+  head.className = 'print-side-head';
+  const originalHead = document.querySelector('.leaf-head').cloneNode(true);
+  originalHead.querySelectorAll('.russian-copy').forEach(element => element.remove());
+  head.innerHTML = originalHead.innerHTML;
+  english.appendChild(head);
+  const columns = document.createElement('div');
+  columns.className = 'print-columns';
+  const left = document.querySelector('.inside-left').cloneNode(true);
+  const right = document.querySelector('.inside-right').cloneNode(true);
+  left.querySelectorAll('.russian-copy').forEach(element => element.remove());
+  right.querySelectorAll('.russian-copy').forEach(element => element.remove());
+  columns.append(left, right);
+  english.appendChild(columns);
+  printable.append(english, buildRussianPrintSide());
+  document.body.appendChild(printable);
+}
+
 function applyLanguage(language) {
   if (language === 'bi') {
     renderBilingual();
+    buildPrintableBilingual();
     document.querySelectorAll('[data-language]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.language === 'bi')));
     return;
   }
