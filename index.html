@@ -210,19 +210,36 @@
                                     <option value="Major Injury">Major Injury</option>
                                     <option value="Suspected Fracture / Sprain">Suspected Fracture / Sprain</option>
                                     <option value="Head Injury / Concussion">Head Injury / Concussion</option>
+                                    <option value="Burn / Scald">Burn / Scald</option>
                                     <option value="Eye Injury">Eye Injury</option>
                                     <option value="Dental / Tooth Injury">Dental / Tooth Injury</option>
                                     <option value="Nosebleed">Nosebleed</option>
+                                    <option value="Insect Bite / Sting">Insect Bite / Sting</option>
                                     <option value="Illness (Fever/Vomiting)">Illness (Fever/Vomiting)</option>
                                     <option value="Rash / Skin Condition">Rash / Skin Condition</option>
                                     <option value="Severe Allergic Reaction">Severe Allergic Reaction (Anaphylaxis)</option>
                                     <option value="Asthma/Breathing Issue">Asthma / Breathing Issue</option>
+                                    <option value="Suspected Poisoning">Suspected Poisoning</option>
+                                    <option value="Swallowed Object">Swallowed Object</option>
                                     <option value="Diabetic Emergency">Diabetic Emergency</option>
                                     <option value="Seizure">Seizure</option>
                                     <option value="Mental Health / Panic Attack">Mental Health / Panic Attack</option>
                                     <option value="Medication Administration">Routine Medication</option>
                                     <option value="Other">Other</option>
                                 </select>
+                                <div id="leafletRecommendation" class="hidden mt-4 rounded-3xl border border-indigo-200 bg-indigo-50 p-4">
+                                    <div class="flex items-start gap-3">
+                                        <div class="rounded-xl bg-white p-2 text-primary shadow-sm"><i data-lucide="book-open" class="w-5 h-5"></i></div>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-onPrimaryContainer">Clinician reference</p>
+                                            <h4 id="leafletRecommendationTitle" class="mt-1 text-sm font-extrabold text-slate-900"></h4>
+                                            <p id="leafletRecommendationText" class="mt-1 text-xs font-medium leading-relaxed text-slate-600"></p>
+                                            <a id="leafletRecommendationLink" href="leaflet-library/index.html" target="_blank" rel="noopener" class="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-onPrimaryContainer">
+                                                Open leaflet <span aria-hidden="true">→</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -1405,8 +1422,52 @@
             if (btns.length === 1) btns[0].classList.add('hidden');
         }
 
+        const leafletRecommendations = {
+            'Minor Injury (Scrape/Cut)': { title: 'Cuts and grazes', path: 'leaflet-library/leaflets/cuts-and-grazes.html', text: 'Use the preprinted leaflet for minor wounds, bleeding, and infection warning signs.' },
+            'Suspected Fracture / Sprain': { title: 'Sprains and strains', path: 'leaflet-library/leaflets/sprains-and-strains.html', text: 'Use the preprinted leaflet for twisted joints, swelling, and activity advice.' },
+            'Head Injury / Concussion': { title: 'Head Injury & Bumps', path: 'leaflet-library/leaflets/head-injury.html', text: 'Use the preprinted leaflet for head bumps, concussion symptoms, and red flags.' },
+            'Eye Injury': { title: 'Eye injuries', path: 'leaflet-library/leaflets/eye-injury.html', text: 'Use the preprinted leaflet for eye contamination, splashes, and injury warning signs.' },
+            'Dental / Tooth Injury': { title: 'Knocked-out tooth', path: 'leaflet-library/leaflets/tooth-injury.html', text: 'Use the preprinted leaflet for tooth injuries and urgent dental follow-up.' },
+            'Nosebleed': { title: 'Nosebleeds', path: 'leaflet-library/leaflets/nosebleed.html', text: 'Use the preprinted leaflet for first aid and when a nosebleed needs further assessment.' },
+            'Illness (Fever/Vomiting)': { title: 'Vomiting and diarrhoea', path: 'leaflet-library/leaflets/vomiting-diarrhoea.html', text: 'Use the preprinted leaflet when vomiting or diarrhoea is the main illness concern.' },
+            'Severe Allergic Reaction': { title: 'Severe allergic reaction', path: 'leaflet-library/leaflets/anaphylaxis.html', text: 'Use the preprinted leaflet for anaphylaxis response, emergency care, and follow-up.' },
+            'Asthma/Breathing Issue': { title: 'Asthma attack', path: 'leaflet-library/leaflets/asthma.html', text: 'Use the preprinted leaflet for asthma symptoms, reliever use, and red flags.' },
+            'Seizure': { title: 'Seizure or fit', path: 'leaflet-library/leaflets/seizure.html', text: 'Use the preprinted leaflet for seizure first aid and emergency escalation.' },
+            'Suspected Poisoning': { title: 'Suspected poisoning', path: 'leaflet-library/leaflets/poisoning.html', text: 'Use the preprinted leaflet for possible medicine or chemical exposure.' },
+            'Swallowed Object': { title: 'Swallowed battery, magnet or object', path: 'leaflet-library/leaflets/swallowed-object.html', text: 'Use the preprinted leaflet for swallowed objects and urgent assessment.' },
+            'Burn': { title: 'Burns and scalds', path: 'leaflet-library/leaflets/burns-and-scalds.html', text: 'Use the preprinted leaflet for burns, scalds, and urgent care warning signs.' },
+            'Insect Bite / Sting': { title: 'Insect bites and stings', path: 'leaflet-library/leaflets/bites-and-stings.html', text: 'Use the preprinted leaflet for local reactions and allergic warning signs.' }
+        };
+
+        function updateLeafletRecommendation(type) {
+            const panel = document.getElementById('leafletRecommendation');
+            const title = document.getElementById('leafletRecommendationTitle');
+            const text = document.getElementById('leafletRecommendationText');
+            const link = document.getElementById('leafletRecommendationLink');
+            const match = leafletRecommendations[type];
+
+            if (!type) {
+                panel.classList.add('hidden');
+                return;
+            }
+
+            panel.classList.remove('hidden');
+            if (match) {
+                title.textContent = match.title;
+                text.textContent = match.text;
+                link.href = match.path;
+                link.innerHTML = 'Open leaflet <span aria-hidden="true">→</span>';
+            } else {
+                title.textContent = 'No exact leaflet match yet';
+                text.textContent = 'Use the full clinician leaflet library to choose the closest approved handout, or add a dedicated leaflet for this incident type.';
+                link.href = 'leaflet-library/index.html';
+                link.innerHTML = 'Open full library <span aria-hidden="true">→</span>';
+            }
+        }
+
         function handleTypeChange() {
             const type = document.getElementById('incidentType').value;
+            updateLeafletRecommendation(type);
             document.querySelectorAll('.protocol-block').forEach(b => b.classList.add('hidden'));
             document.getElementById('protocolWarning').classList.add('hidden');
             document.querySelectorAll('.protocol-check').forEach(c => { c.required = false; c.checked = false; });
