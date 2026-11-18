@@ -137,6 +137,12 @@
             #dailySummaryCard { position:absolute; left:0; top:0; width:100%; box-shadow:none !important; border:0 !important; }
             #dailySummaryCard button { display:none !important; }
         }
+        body.touch-mode button, body.touch-mode select, body.touch-mode input, body.touch-mode textarea { min-height:56px !important; }
+        body.touch-mode button { font-size:0.95rem; }
+        body.touch-mode #incidentForm { gap:2.5rem; }
+        body.touch-mode #incidentForm > div:not(:last-child) { padding:1.5rem; }
+        body.touch-mode .clinician-quick-actions button { padding:.8rem 1rem; }
+        body.touch-mode #todayView .bg-surfaceContainer { padding:1.5rem; }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col relative pb-20 md:pb-0">
@@ -155,6 +161,7 @@
             </div>
             
             <div class="hidden md:flex bg-surfaceDim p-1.5 rounded-full">
+                <button onclick="switchTab('todayView')" id="tab-todayView" class="px-6 py-2 text-sm font-semibold rounded-full bg-white shadow-sm text-onPrimaryContainer transition-all">Today</button>
                 <button onclick="switchTab('formView')" id="tab-formView" class="px-6 py-2 text-sm font-semibold rounded-full bg-white shadow-sm text-onPrimaryContainer transition-all">Log Incident</button>
                 <button onclick="switchTab('dashboardView')" id="tab-dashboardView" class="px-6 py-2 text-sm font-semibold rounded-full text-slate-500 hover:text-slate-800 transition-all">Med Dashboard</button>
                 <button onclick="switchTab('attendanceView')" id="tab-attendanceView" class="px-6 py-2 text-sm font-semibold rounded-full text-slate-500 hover:text-slate-800 transition-all">Attendance</button>
@@ -180,23 +187,61 @@
 
     <!-- MOBILE NAV -->
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-surfaceContainer z-20 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] border-t border-slate-100">
-        <div class="grid grid-cols-3 items-center h-20 px-2">
+        <div class="grid grid-cols-4 items-center h-20 px-2">
+            <button onclick="switchTab('todayView')" id="mobile-tab-todayView" class="flex flex-col items-center justify-center w-full h-full text-xs font-bold text-primary">
+                <div class="bg-primaryContainer text-primary px-4 py-1.5 rounded-full mb-1 transition-colors" id="mobile-indicator-todayView"><i data-lucide="sun" class="w-5 h-5"></i></div><span>Today</span>
+            </button>
             <button onclick="switchTab('formView')" id="mobile-tab-formView" class="flex flex-col items-center justify-center w-full h-full text-xs font-bold text-primary">
-                <div class="bg-primaryContainer text-primary px-5 py-1.5 rounded-full mb-1 transition-colors" id="mobile-indicator-formView"><i data-lucide="file-plus" class="w-5 h-5"></i></div><span>Log</span>
+                <div class="px-4 py-1.5 rounded-full mb-1 transition-colors text-slate-500" id="mobile-indicator-formView"><i data-lucide="file-plus" class="w-5 h-5"></i></div><span>Log</span>
             </button>
             <button onclick="switchTab('dashboardView')" id="mobile-tab-dashboardView" class="flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-500">
-                <div class="px-5 py-1.5 rounded-full mb-1 transition-colors text-slate-500" id="mobile-indicator-dashboardView"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></div><span>Medical</span>
+                <div class="px-4 py-1.5 rounded-full mb-1 transition-colors text-slate-500" id="mobile-indicator-dashboardView"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></div><span>Medical</span>
             </button>
             <button onclick="switchTab('attendanceView')" id="mobile-tab-attendanceView" class="flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-500">
-                <div class="px-5 py-1.5 rounded-full mb-1 transition-colors text-slate-500" id="mobile-indicator-attendanceView"><i data-lucide="users" class="w-5 h-5"></i></div><span>Attend</span>
+                <div class="px-4 py-1.5 rounded-full mb-1 transition-colors text-slate-500" id="mobile-indicator-attendanceView"><i data-lucide="users" class="w-5 h-5"></i></div><span>Attend</span>
             </button>
         </div>
     </div>
 
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8" id="mainContent">
         
+        <!-- TODAY HOME TAB -->
+        <div id="todayView" class="space-y-6 animate-fade-in">
+            <section class="clinician-intro" aria-labelledby="todayTitle">
+                <div>
+                    <p class="clinician-kicker">Your clinic at a glance</p>
+                    <h2 id="todayTitle">Good morning, Doctor</h2>
+                    <p class="clinician-intro-copy">Start the next task quickly, review who needs attention, and keep the clinic moving.</p>
+                </div>
+                <div class="clinician-intro-side">
+                    <span class="clinician-date-label">Today</span>
+                    <strong id="todayHomeDate">--</strong>
+                    <div class="clinician-quick-actions">
+                        <button type="button" onclick="startNewIncident()"><i data-lucide="plus" class="w-4 h-4"></i> New incident</button>
+                        <button type="button" onclick="toggleTimerDrawer()"><i data-lucide="timer" class="w-4 h-4"></i> Start timer</button>
+                    </div>
+                </div>
+            </section>
+            <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                <div class="bg-surfaceContainer rounded-3xl border border-slate-100 p-5 shadow-sm"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Seen today</p><p id="todayStatRecords" class="mt-2 text-3xl font-black text-primary">0</p></div>
+                <div class="bg-surfaceContainer rounded-3xl border border-slate-100 p-5 shadow-sm"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Follow-ups</p><p id="todayStatFollowUps" class="mt-2 text-3xl font-black text-error">0</p></div>
+                <div class="bg-surfaceContainer rounded-3xl border border-slate-100 p-5 shadow-sm"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Active timers</p><p id="todayStatTimers" class="mt-2 text-3xl font-black text-purple-700">0</p></div>
+                <div class="bg-surfaceContainer rounded-3xl border border-slate-100 p-5 shadow-sm"><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Sync status</p><p id="todaySyncStatus" class="mt-2 text-sm font-extrabold text-slate-600">Not connected</p></div>
+            </div>
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <section class="bg-surfaceContainer rounded-4xl border border-slate-100 p-6 shadow-sm">
+                    <div class="flex items-center justify-between gap-3"><div><h3 class="text-lg font-extrabold text-slate-900">Recent students</h3><p class="mt-1 text-sm font-medium text-slate-500">Open a profile, start a record, or start a timer.</p></div><button onclick="openStudentSearchModal()" class="rounded-full bg-surfaceDim p-3 text-primary hover:bg-primaryContainer" aria-label="Search students"><i data-lucide="search" class="h-5 w-5"></i></button></div>
+                    <div id="todayRecentStudents" class="mt-5 space-y-2"></div>
+                </section>
+                <section class="bg-surfaceContainer rounded-4xl border border-slate-100 p-6 shadow-sm">
+                    <div class="flex items-center justify-between gap-3"><div><h3 class="text-lg font-extrabold text-slate-900">Pending follow-ups</h3><p class="mt-1 text-sm font-medium text-slate-500">Students needing your attention.</p></div><button onclick="switchTab('dashboardView')" class="text-xs font-extrabold text-primary hover:text-onPrimaryContainer">View dashboard</button></div>
+                    <div id="todayFollowUps" class="mt-5 space-y-2"></div>
+                </section>
+            </div>
+        </div>
+
         <!-- MEDICAL LOG FORM TAB -->
-        <div id="formView" class="space-y-6 relative max-w-4xl mx-auto">
+        <div id="formView" class="hidden space-y-6 relative max-w-4xl mx-auto">
             <section id="clinicianIntro" class="clinician-intro" aria-labelledby="clinicianIntroTitle">
                 <div>
                     <p class="clinician-kicker">Private medical suite</p>
@@ -856,6 +901,10 @@
                             <input id="defaultFollowUpInput" type="checkbox" class="h-5 w-5 rounded text-primary focus:ring-primaryContainer">
                             Default new records to follow-up tomorrow
                         </label>
+                        <label class="flex items-center gap-3 rounded-xl border border-indigo-200 bg-indigo-50 p-3 text-xs font-bold text-onPrimaryContainer sm:col-span-2">
+                            <input id="touchModeInput" type="checkbox" class="h-5 w-5 rounded text-primary focus:ring-primaryContainer">
+                            Touch-friendly tablet mode: larger controls and more space between actions
+                        </label>
                     </div>
                 </div>
             </div>
@@ -924,6 +973,8 @@
             });
             document.getElementById('att-search-input')?.addEventListener('input', updateAttDashboard);
             document.getElementById('att-grade-filter')?.addEventListener('change', updateAttDashboard);
+            renderTodayView();
+            switchTab('todayView');
         });
 
         function showToast(msg, type) {
@@ -939,7 +990,7 @@
         }
 
         function switchTab(id) {
-            ['formView', 'dashboardView', 'attendanceView'].forEach(tabId => {
+            ['todayView', 'formView', 'dashboardView', 'attendanceView'].forEach(tabId => {
                 document.getElementById(tabId).classList.add('hidden');
                 document.getElementById(`tab-${tabId}`).className = "px-6 py-2 text-sm font-semibold rounded-full text-slate-500 hover:text-slate-800 transition-all";
                 document.getElementById(`mobile-tab-${tabId}`).className = "flex flex-col items-center justify-center w-full h-full text-xs font-medium text-slate-500";
@@ -952,7 +1003,7 @@
 
             if (id === 'dashboardView' && allLogsCache.length === 0) loadDashboardData();
             const fab = document.getElementById('timerFAB');
-            if(id === 'formView' || id === 'dashboardView') fab.classList.remove('hidden'); else fab.classList.add('hidden');
+            if(id === 'todayView' || id === 'formView' || id === 'dashboardView') fab.classList.remove('hidden'); else fab.classList.add('hidden');
             window.scrollTo(0,0);
         }
 
@@ -981,6 +1032,8 @@
             localStorage.setItem('medilog_default_area', document.getElementById('defaultAreaInput').value.trim());
             localStorage.setItem('medilog_default_parent', document.getElementById('defaultParentContactInput').value);
             localStorage.setItem('medilog_default_followup', document.getElementById('defaultFollowUpInput').checked ? '1' : '0');
+            localStorage.setItem('medilog_touch_mode', document.getElementById('touchModeInput').checked ? '1' : '0');
+            applyTouchMode();
             if(CONFIG_URL) {
                 document.getElementById('setupWarning').classList.add('hidden');
                 silentFetchLogs(); 
@@ -1011,16 +1064,23 @@
             const area = localStorage.getItem('medilog_default_area') || '';
             const parent = localStorage.getItem('medilog_default_parent') || 'No - Not Required';
             const followUp = localStorage.getItem('medilog_default_followup') === '1';
+            const touchMode = localStorage.getItem('medilog_touch_mode') === '1';
             const urlInput = document.getElementById('scriptUrlInput');
             if (urlInput) urlInput.value = CONFIG_URL;
             document.getElementById('defaultTemplateInput').value = template;
             document.getElementById('defaultAreaInput').value = area;
             document.getElementById('defaultParentContactInput').value = parent;
             document.getElementById('defaultFollowUpInput').checked = followUp;
+            document.getElementById('touchModeInput').checked = touchMode;
             if (area) document.getElementById('schoolLocation').value = area;
             document.getElementById('parentContacted').value = parent;
             document.getElementById('followUpFlag').checked = followUp;
             if (template) applyClinicalTemplate(template);
+            applyTouchMode();
+        }
+
+        function applyTouchMode() {
+            document.body.classList.toggle('touch-mode', document.getElementById('touchModeInput')?.checked === true);
         }
 
         // ------------------ 360 STUDENT PROFILE & GLOBAL SEARCH ------------------
@@ -1575,8 +1635,56 @@
         function silentFetchLogs() {
             if (!CONFIG_URL) return;
             fetch(CONFIG_URL + '?action=getLogs').then(res => res.json()).then(logs => {
-                if (!logs.error) allLogsCache = logs;
+                if (!logs.error) { allLogsCache = logs; renderTodayView(); renderDailySummary(); }
             }).catch(e => console.log("Silent log fetch error"));
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, character => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[character]));
+        }
+
+        function startNewIncident() {
+            switchTab('formView');
+            setTimeout(() => document.querySelector('.student-name-input')?.focus(), 100);
+        }
+
+        function startIncidentForStudent(name, grade) {
+            switchTab('formView');
+            const nameInput = document.querySelector('.student-name-input');
+            const gradeInput = document.querySelector('.student-grade-input');
+            if (nameInput) nameInput.value = name;
+            if (gradeInput) gradeInput.value = grade || '';
+            setTimeout(() => nameInput?.focus(), 100);
+        }
+
+        function startStudentTimer(name) {
+            toggleTimerDrawer();
+            setTimeout(() => {
+                const input = document.getElementById('timerNameInput');
+                if (input) { input.value = name; input.focus(); }
+            }, 100);
+        }
+
+        function renderTodayView() {
+            const today = new Date();
+            const todayLogs = allLogsCache.filter(log => {
+                const date = new Date(log.date);
+                return !Number.isNaN(date.getTime()) && date.toDateString() === today.toDateString();
+            });
+            const followUps = allLogsCache.filter(log => log.followUp === 'Yes').sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 6);
+            const recent = allLogsCache.slice().sort((a,b) => new Date(b.date) - new Date(a.date)).filter((log, index, logs) => log.name && logs.findIndex(item => getNormKey(item.name) === getNormKey(log.name)) === index).slice(0, 6);
+            document.getElementById('todayHomeDate').textContent = new Intl.DateTimeFormat(undefined, { weekday:'long', day:'numeric', month:'long', year:'numeric' }).format(today);
+            document.getElementById('todayStatRecords').textContent = todayLogs.length;
+            document.getElementById('todayStatFollowUps').textContent = followUps.length;
+            document.getElementById('todayStatTimers').textContent = timers.length;
+            document.getElementById('todaySyncStatus').textContent = CONFIG_URL ? (allLogsCache.length ? 'Synced' : 'Connected') : 'Not connected';
+
+            const recentContainer = document.getElementById('todayRecentStudents');
+            recentContainer.innerHTML = recent.length ? recent.map(student => `<div class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-surfaceDim p-3"><div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primaryContainer font-black text-primary">${escapeHtml(student.name).charAt(0).toUpperCase()}</div><div class="min-w-0 flex-1"><p class="truncate text-sm font-extrabold text-slate-800">${escapeHtml(student.name)}</p><p class="text-xs font-bold uppercase tracking-widest text-slate-400">Grade ${escapeHtml(student.grade || '--')}</p></div><div class="flex gap-1"><button onclick="viewStudentProfile('${escapeHtml(student.name).replace(/'/g, "\\'")}', '${escapeHtml(student.grade || '').replace(/'/g, "\\'")}')" class="rounded-xl p-2 text-slate-500 hover:bg-white hover:text-primary" title="Open profile"><i data-lucide="user-round" class="h-4 w-4"></i></button><button onclick="startIncidentForStudent('${escapeHtml(student.name).replace(/'/g, "\\'")}', '${escapeHtml(student.grade || '').replace(/'/g, "\\'")}')" class="rounded-xl p-2 text-slate-500 hover:bg-white hover:text-primary" title="New incident"><i data-lucide="file-plus-2" class="h-4 w-4"></i></button><button onclick="startStudentTimer('${escapeHtml(student.name).replace(/'/g, "\\'")}')" class="rounded-xl p-2 text-slate-500 hover:bg-white hover:text-primary" title="Start timer"><i data-lucide="timer" class="h-4 w-4"></i></button></div></div>`).join('') : '<div class="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm font-medium text-slate-400">Recent students will appear after records are synced.</div>';
+
+            const followUpContainer = document.getElementById('todayFollowUps');
+            followUpContainer.innerHTML = followUps.length ? followUps.map(log => `<div class="flex items-center gap-3 rounded-2xl border border-red-100 bg-errorContainer/50 p-3"><div class="min-w-0 flex-1"><p class="truncate text-sm font-extrabold text-onErrorContainer">${escapeHtml(log.name)}</p><p class="truncate text-xs font-medium text-red-700">${escapeHtml(log.type || 'Follow-up')} · ${new Date(log.date).toLocaleDateString()}</p></div><button onclick="startIncidentForStudent('${escapeHtml(log.name).replace(/'/g, "\\'")}', '${escapeHtml(log.grade || '').replace(/'/g, "\\'")}')" class="rounded-xl bg-white p-2 text-error hover:bg-red-100" title="Start follow-up"><i data-lucide="arrow-right" class="h-4 w-4"></i></button></div>`).join('') : '<div class="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm font-medium text-slate-400">No pending follow-ups.</div>';
+            lucide.createIcons();
         }
 
         function addStudentRow() {
@@ -1726,9 +1834,9 @@
         }
         function addTimer(minutes) {
             const name = document.getElementById('timerNameInput').value.trim() || `Student ${timers.length + 1}`; timers.push({ id: Date.now(), name, endTime: new Date().getTime() + (minutes * 60000), alerted: false });
-            document.getElementById('timerNameInput').value = ''; saveTimers(); renderTimers(); if(!timerInterval) timerInterval = setInterval(checkTimers, 1000); showToast(`${minutes}m timer started`, 'info');
+            document.getElementById('timerNameInput').value = ''; saveTimers(); renderTimers(); renderTodayView(); if(!timerInterval) timerInterval = setInterval(checkTimers, 1000); showToast(`${minutes}m timer started`, 'info');
         }
-        function removeTimer(id) { timers = timers.filter(t => t.id !== id); saveTimers(); renderTimers(); if(timers.length === 0) clearInterval(timerInterval); }
+        function removeTimer(id) { timers = timers.filter(t => t.id !== id); saveTimers(); renderTimers(); renderTodayView(); if(timers.length === 0) clearInterval(timerInterval); }
         function checkTimers() { const now = new Date().getTime(); timers.forEach(t => { if (now >= t.endTime && !t.alerted) { t.alerted = true; showToast(`Time up for ${t.name}!`, 'error'); } }); renderTimers(); }
         function renderTimers() {
             const container = document.getElementById('activeTimersContainer'); const badge = document.getElementById('timerBadge');
@@ -1857,14 +1965,16 @@
             });
         }
         function updateWorkspaceDate() {
-            const target = document.getElementById('workspaceDate');
-            if (!target) return;
-            target.textContent = new Intl.DateTimeFormat(undefined, {
+            const formatted = new Intl.DateTimeFormat(undefined, {
                 weekday: 'long',
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
             }).format(new Date());
+            ['workspaceDate', 'todayHomeDate'].forEach(id => {
+                const target = document.getElementById(id);
+                if (target) target.textContent = formatted;
+            });
         }
         updateWorkspaceDate();
     </script>
