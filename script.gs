@@ -41,6 +41,25 @@ function doGet(e) {
         }
       }
       return ContentService.createTextOutput(JSON.stringify(logs)).setMimeType(ContentService.MimeType.JSON);
+    } else if (e.parameter.action === 'getProfiles') {
+      var profileSheet = ss.getSheetByName("StudentProfiles");
+      if (!profileSheet || profileSheet.getLastRow() < 2) {
+        return ContentService.createTextOutput("[]").setMimeType(ContentService.MimeType.JSON);
+      }
+      var profileData = profileSheet.getDataRange().getValues();
+      var profiles = [];
+      for (var p = 1; p < profileData.length; p++) {
+        if (profileData[p][0]) {
+          profiles.push({
+            name: profileData[p][0],
+            grade: profileData[p][1] || "",
+            allergies: profileData[p][2] || "",
+            medications: profileData[p][3] || "",
+            notes: profileData[p][4] || ""
+          });
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify(profiles)).setMimeType(ContentService.MimeType.JSON);
     } else {
       var sheet = ss.getSheetByName("Roster");
       if (!sheet) return ContentService.createTextOutput("[]").setMimeType(ContentService.MimeType.JSON);

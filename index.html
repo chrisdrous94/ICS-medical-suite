@@ -497,6 +497,12 @@
                     <button onclick="exportPDF()" class="p-3 sm:px-5 sm:py-2.5 bg-surfaceContainer border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-surface flex items-center justify-center gap-2 shadow-sm transition-colors flex-1 md:flex-none">
                         <i data-lucide="download" class="w-4 h-4"></i> <span class="hidden sm:inline">PDF</span>
                     </button>
+                    <button onclick="generateDailyHandoverPDF()" class="p-3 sm:px-5 sm:py-2.5 bg-surfaceContainer border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-surface flex items-center justify-center gap-2 shadow-sm transition-colors flex-1 md:flex-none">
+                        <i data-lucide="clipboard-check" class="w-4 h-4"></i> <span class="hidden sm:inline">Daily handover</span>
+                    </button>
+                    <button onclick="generateWeeklyReportPDF()" class="p-3 sm:px-5 sm:py-2.5 bg-surfaceContainer border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-surface flex items-center justify-center gap-2 shadow-sm transition-colors flex-1 md:flex-none">
+                        <i data-lucide="calendar-range" class="w-4 h-4"></i> <span class="hidden sm:inline">Weekly report</span>
+                    </button>
                     <button onclick="loadDashboardData()" id="refreshDashBtn" class="p-3 sm:px-5 sm:py-2.5 bg-primaryContainer text-onPrimaryContainer rounded-full text-sm font-bold hover:bg-indigo-200 flex items-center justify-center gap-2 shadow-sm transition-colors flex-1 md:flex-none">
                         <i data-lucide="refresh-cw" class="w-4 h-4"></i> <span class="hidden sm:inline">Sync</span>
                     </button>
@@ -720,6 +726,15 @@
                     </div>
 
                     <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4"></i> Important information</h4>
+                        <div class="space-y-3 text-sm">
+                            <div><p class="text-[10px] font-bold text-slate-400 uppercase">Allergies</p><p id="sp-allergies" class="mt-1 font-bold text-slate-700">No profile information</p></div>
+                            <div><p class="text-[10px] font-bold text-slate-400 uppercase">Regular medication</p><p id="sp-medications" class="mt-1 font-bold text-slate-700">No profile information</p></div>
+                            <div><p class="text-[10px] font-bold text-slate-400 uppercase">Open follow-ups</p><p id="sp-followups" class="mt-1 font-bold text-error">0</p></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
                         <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i data-lucide="users" class="w-4 h-4"></i> Attendance Status</h4>
                         <div class="flex items-center justify-between mb-4">
                             <div>
@@ -907,6 +922,33 @@
                         </label>
                     </div>
                 </div>
+                <div class="border-t border-slate-100 pt-6">
+                    <h4 class="text-sm font-extrabold text-slate-800">Documents and saved templates</h4>
+                    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <label class="text-xs font-bold text-slate-600">Doctor name
+                            <input id="doctorNameInput" type="text" placeholder="e.g. Dr Chris Drous" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-surfaceDim px-3 py-2.5 text-sm font-medium text-slate-700">
+                        </label>
+                        <label class="text-xs font-bold text-slate-600">School logo URL
+                            <input id="schoolLogoInput" type="text" placeholder="https://.../logo.svg" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-surfaceDim px-3 py-2.5 text-sm font-medium text-slate-700">
+                        </label>
+                    </div>
+                    <div class="mt-5 rounded-2xl border border-slate-200 bg-surfaceDim p-4">
+                        <p class="text-xs font-black uppercase tracking-widest text-slate-500">Create your own template</p>
+                        <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <input id="customTemplateName" type="text" placeholder="Template name" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium">
+                            <select id="customTemplateType" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium">
+                                <option value="Head Injury / Concussion">Head Injury / Concussion</option><option value="Asthma/Breathing Issue">Asthma / Breathing Issue</option><option value="Illness (Fever/Vomiting)">Illness (Fever/Vomiting)</option><option value="Minor Injury (Scrape/Cut)">Minor Injury (Scrape/Cut)</option><option value="Severe Allergic Reaction">Severe Allergic Reaction</option><option value="Other">Other</option>
+                            </select>
+                            <select id="customTemplateAction" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium">
+                                <option value="Rest in Clinic">Rest in Clinic</option><option value="Bandaged / Cleaned Wound">Bandaged / Cleaned Wound</option><option value="Administered Medication">Administered Medication</option><option value="EMS / Ambulance Called">EMS / Ambulance Called</option><option value="Monitored Vitals">Monitored Vitals</option><option value="Sent Home">Sent Home</option>
+                            </select>
+                            <select id="customTemplateTimer" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium"><option value="0">No timer suggestion</option><option value="5">Suggest 5 minute timer</option><option value="10">Suggest 10 minute timer</option><option value="15">Suggest 15 minute timer</option><option value="30">Suggest 30 minute timer</option></select>
+                        </div>
+                        <label class="mt-3 flex items-center gap-2 text-xs font-bold text-slate-600"><input id="customTemplateFollowUp" type="checkbox" class="h-4 w-4 rounded text-primary"> Require follow-up by default</label>
+                        <button onclick="saveCustomTemplate()" type="button" class="mt-3 rounded-full bg-primary px-4 py-2.5 text-xs font-extrabold text-white hover:bg-onPrimaryContainer">Save template</button>
+                        <div id="customTemplateList" class="mt-3 space-y-2"></div>
+                    </div>
+                </div>
             </div>
             <div class="p-5 border-t border-slate-100 bg-surface flex justify-end gap-3 rounded-b-4xl">
                 <button onclick="closeModal('settingsModal')" class="px-6 py-3 text-sm text-slate-600 hover:bg-slate-200 rounded-full font-bold">Cancel</button>
@@ -921,6 +963,7 @@
         // ------------------ GLOBAL APP LOGIC ------------------
         let CONFIG_URL = localStorage.getItem('medilog_script_url') || '';
         let allLogsCache = []; 
+        let studentProfilesCache = [];
 
         // Attendance State
         let attAllStudents = []; 
@@ -1033,30 +1076,39 @@
             localStorage.setItem('medilog_default_parent', document.getElementById('defaultParentContactInput').value);
             localStorage.setItem('medilog_default_followup', document.getElementById('defaultFollowUpInput').checked ? '1' : '0');
             localStorage.setItem('medilog_touch_mode', document.getElementById('touchModeInput').checked ? '1' : '0');
+            localStorage.setItem('medilog_doctor_name', document.getElementById('doctorNameInput').value.trim());
+            localStorage.setItem('medilog_school_logo', document.getElementById('schoolLogoInput').value.trim() || 'https://icanskill.com/img/logo/ican.svg');
             applyTouchMode();
             if(CONFIG_URL) {
                 document.getElementById('setupWarning').classList.add('hidden');
                 silentFetchLogs(); 
+                fetchStudentProfiles();
             }
             showToast('Settings saved!', 'success');
             closeModal('settingsModal');
         }
 
-        const clinicalTemplates = {
+        let clinicalTemplates = {
             'head-injury': { type: 'Head Injury / Concussion', action: 'Rest in Clinic' },
             'asthma': { type: 'Asthma/Breathing Issue', action: 'Administered Medication' },
             'anaphylaxis': { type: 'Severe Allergic Reaction', action: 'EMS / Ambulance Called' },
             'vomiting': { type: 'Illness (Fever/Vomiting)', action: 'Rest in Clinic' },
             'minor-wound': { type: 'Minor Injury (Scrape/Cut)', action: 'Bandaged / Cleaned Wound' }
         };
+        let customTemplates = JSON.parse(localStorage.getItem('medilog_custom_templates') || '[]');
 
         function applyClinicalTemplate(key) {
             const template = clinicalTemplates[key];
             if (!template) return;
             document.getElementById('incidentType').value = template.type;
             document.getElementById('actionTaken').value = template.action;
+            document.getElementById('followUpFlag').checked = Boolean(template.followUp);
             handleTypeChange();
             if (document.getElementById('clinicalTemplate')) document.getElementById('clinicalTemplate').value = key;
+            if (template.timer) {
+                document.getElementById('timerNameInput').dataset.suggestedMinutes = template.timer;
+                showToast(`Template suggests a ${template.timer}-minute timer.`, 'info');
+            }
         }
 
         function loadClinicianSettings() {
@@ -1065,13 +1117,18 @@
             const parent = localStorage.getItem('medilog_default_parent') || 'No - Not Required';
             const followUp = localStorage.getItem('medilog_default_followup') === '1';
             const touchMode = localStorage.getItem('medilog_touch_mode') === '1';
+            const doctorName = localStorage.getItem('medilog_doctor_name') || '';
+            const schoolLogo = localStorage.getItem('medilog_school_logo') || 'https://icanskill.com/img/logo/ican.svg';
             const urlInput = document.getElementById('scriptUrlInput');
             if (urlInput) urlInput.value = CONFIG_URL;
-            document.getElementById('defaultTemplateInput').value = template;
             document.getElementById('defaultAreaInput').value = area;
             document.getElementById('defaultParentContactInput').value = parent;
             document.getElementById('defaultFollowUpInput').checked = followUp;
             document.getElementById('touchModeInput').checked = touchMode;
+            document.getElementById('doctorNameInput').value = doctorName;
+            document.getElementById('schoolLogoInput').value = schoolLogo;
+            loadCustomTemplates();
+            document.getElementById('defaultTemplateInput').value = template;
             if (area) document.getElementById('schoolLocation').value = area;
             document.getElementById('parentContacted').value = parent;
             document.getElementById('followUpFlag').checked = followUp;
@@ -1081,6 +1138,36 @@
 
         function applyTouchMode() {
             document.body.classList.toggle('touch-mode', document.getElementById('touchModeInput')?.checked === true);
+        }
+
+        function loadCustomTemplates() {
+            customTemplates.forEach(template => {
+                clinicalTemplates[template.key] = template;
+                ['clinicalTemplate', 'defaultTemplateInput'].forEach(id => {
+                    const select = document.getElementById(id);
+                    if (select && !select.querySelector(`option[value="${template.key}"]`)) select.insertAdjacentHTML('beforeend', `<option value="${template.key}">${escapeHtml(template.name)}</option>`);
+                });
+            });
+            const list = document.getElementById('customTemplateList');
+            if (list) list.innerHTML = customTemplates.length ? customTemplates.map(t => `<div class="flex items-center justify-between gap-3 rounded-xl bg-white px-3 py-2 text-xs"><span class="font-bold text-slate-700">${escapeHtml(t.name)}</span><button type="button" onclick="deleteCustomTemplate('${t.key}')" class="font-bold text-error">Remove</button></div>`).join('') : '<p class="text-xs font-medium text-slate-400">No custom templates saved.</p>';
+        }
+
+        function saveCustomTemplate() {
+            const name = document.getElementById('customTemplateName').value.trim();
+            if (!name) return showToast('Add a template name first.', 'error');
+            const key = `custom-${Date.now()}`;
+            customTemplates.push({ key, name, type: document.getElementById('customTemplateType').value, action: document.getElementById('customTemplateAction').value, timer: parseInt(document.getElementById('customTemplateTimer').value, 10) || 0, followUp: document.getElementById('customTemplateFollowUp').checked });
+            localStorage.setItem('medilog_custom_templates', JSON.stringify(customTemplates));
+            loadCustomTemplates();
+            document.getElementById('customTemplateName').value = '';
+            showToast('Custom template saved.', 'success');
+        }
+
+        function deleteCustomTemplate(key) {
+            customTemplates = customTemplates.filter(template => template.key !== key);
+            delete clinicalTemplates[key];
+            localStorage.setItem('medilog_custom_templates', JSON.stringify(customTemplates));
+            loadCustomTemplates();
         }
 
         // ------------------ 360 STUDENT PROFILE & GLOBAL SEARCH ------------------
@@ -1152,6 +1239,8 @@
             
             const att = attAllStudents.find(s => getNormKey(s.name) === targetKey);
             const logs = allLogsCache.filter(l => l.name && getNormKey(l.name) === targetKey).sort((a,b) => new Date(b.date) - new Date(a.date));
+            const profile = studentProfilesCache.find(s => getNormKey(s.name) === targetKey) || {};
+            const openFollowUps = logs.filter(log => log.followUp === 'Yes').length;
 
             document.getElementById('sp-name').innerText = name;
             document.getElementById('sp-grade').innerText = `Grade ${grade && grade !== 'undefined' ? grade : '--'}`;
@@ -1159,6 +1248,9 @@
 
             document.getElementById('sp-med-total').innerText = logs.length;
             document.getElementById('sp-med-latest').innerText = logs.length > 0 ? new Date(logs[0].date).toLocaleDateString() : 'None recorded';
+            document.getElementById('sp-allergies').innerText = profile.allergies || 'No profile information';
+            document.getElementById('sp-medications').innerText = profile.medications || 'No profile information';
+            document.getElementById('sp-followups').innerText = openFollowUps;
 
             if(att) {
                 document.getElementById('sp-att-val').innerText = `${att.attendance.toFixed(1)}%`;
@@ -1630,6 +1722,7 @@
             document.getElementById('incidentTime').value = new Date().toTimeString().slice(0, 5);
             addStudentRow(); 
             silentFetchLogs(); 
+            fetchStudentProfiles();
         }
         
         function silentFetchLogs() {
@@ -1637,6 +1730,13 @@
             fetch(CONFIG_URL + '?action=getLogs').then(res => res.json()).then(logs => {
                 if (!logs.error) { allLogsCache = logs; renderTodayView(); renderDailySummary(); }
             }).catch(e => console.log("Silent log fetch error"));
+        }
+
+        function fetchStudentProfiles() {
+            if (!CONFIG_URL) return;
+            fetch(CONFIG_URL + '?action=getProfiles').then(res => res.json()).then(profiles => {
+                if (Array.isArray(profiles)) studentProfilesCache = profiles;
+            }).catch(e => console.log("Student profile fetch error"));
         }
 
         function escapeHtml(value) {
@@ -1818,6 +1918,7 @@
             .then(data => {
                 if (data.result === 'error') throw new Error(data.error);
                 showToast(`Saved ${students.length} record(s).`, 'success');
+                generateIncidentPDF(payload);
                 document.getElementById('incidentForm').reset(); document.getElementById('studentContainer').innerHTML = ''; addStudentRow(); handleTypeChange();
                 clearAnatSelection(); document.getElementById('incidentTime').value = new Date().toTimeString().slice(0, 5);
                 silentFetchLogs(); 
@@ -1953,6 +2054,44 @@
             showToast("Generating PDF...", "info"); const element = document.getElementById('dashboardView');
             const btnRow = element.querySelector('.flex.flex-wrap'); btnRow.classList.add('hidden');
             html2pdf().set({ margin: 0.5, filename: `ICS_MediLog_${new Date().toLocaleDateString().replace(/\//g,'-')}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' } }).from(element).save().then(() => { btnRow.classList.remove('hidden'); showToast("PDF Downloaded", "success"); });
+        }
+
+        function pdfBranding() {
+            return { doctor: localStorage.getItem('medilog_doctor_name') || 'School Doctor', logo: localStorage.getItem('medilog_school_logo') || 'https://icanskill.com/img/logo/ican.svg' };
+        }
+
+        function createReportPDF(title, subtitle, content, filename) {
+            if (typeof html2pdf === 'undefined') return showToast('PDF library is not available.', 'error');
+            const brand = pdfBranding();
+            const root = document.createElement('div');
+            root.style.cssText = 'width:760px;padding:36px;background:#fff;color:#17233d;font-family:Arial,sans-serif;';
+            root.innerHTML = `<div style="display:flex;align-items:center;gap:16px;border-bottom:3px solid #4f46e5;padding-bottom:18px;margin-bottom:24px;"><img src="${escapeHtml(brand.logo)}" style="width:72px;height:52px;object-fit:contain;" onerror="this.style.display='none'"><div><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#4f46e5;text-transform:uppercase;">I CAN SCHOOL · MEDICAL SUITE</div><h1 style="font-size:25px;margin:6px 0 0;">${escapeHtml(title)}</h1><div style="font-size:12px;color:#64748b;margin-top:4px;">${escapeHtml(subtitle)}</div></div></div>${content}<div style="margin-top:42px;padding-top:14px;border-top:1px solid #cbd5e1;font-size:12px;color:#475569;">Doctor: ${escapeHtml(brand.doctor)}<br><br>Signature: ____________________________________</div>`;
+            document.body.appendChild(root);
+            html2pdf().set({ margin:0.35, filename, image:{type:'jpeg',quality:0.96}, html2canvas:{scale:2,useCORS:true}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} }).from(root).save().then(() => root.remove()).catch(() => { root.remove(); showToast('PDF generation failed.', 'error'); });
+        }
+
+        function generateIncidentPDF(payload) {
+            const rows = payload.students.map(student => `<tr><td style="padding:9px;border-bottom:1px solid #e2e8f0;font-weight:700;">${escapeHtml(student.name)}</td><td style="padding:9px;border-bottom:1px solid #e2e8f0;">${escapeHtml(student.grade)}</td></tr>`).join('');
+            const content = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;"><div style="background:#f8fafc;padding:12px;border-radius:8px;"><b>Date / time</b><br>${new Date().toLocaleString()} · ${escapeHtml(payload.incidentTime)}</div><div style="background:#f8fafc;padding:12px;border-radius:8px;"><b>Incident type</b><br>${escapeHtml(payload.incidentType)}</div></div><h2 style="font-size:15px;margin:18px 0 8px;">Students</h2><table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;"><thead><tr style="background:#eef2ff;text-align:left;"><th style="padding:9px;">Name</th><th style="padding:9px;">Grade</th></tr></thead><tbody>${rows}</tbody></table><h2 style="font-size:15px;margin:18px 0 8px;">Clinical record</h2><p><b>Area:</b> ${escapeHtml(payload.schoolLocation)} &nbsp; <b>Location:</b> ${escapeHtml(payload.location)}</p><p><b>Description:</b> ${escapeHtml(payload.description)}</p><p><b>Action:</b> ${escapeHtml(payload.actionTaken)} &nbsp; <b>Parent contact:</b> ${escapeHtml(payload.parentContacted)}</p><p><b>Additional notes:</b> ${escapeHtml(payload.additionalNotes || 'None')}</p><p><b>Follow-up:</b> ${payload.followUp ? 'Required' : 'Not flagged'} &nbsp; <b>Checklist:</b> ${escapeHtml(payload.concussionDetails || 'N/A')}</p>`;
+            createReportPDF('Incident record', 'Confidential clinical record', content, `ICS_Incident_${new Date().toISOString().slice(0,10)}.pdf`);
+        }
+
+        function reportLogs(days) {
+            const since = new Date(); since.setHours(0,0,0,0); since.setDate(since.getDate() - (days - 1));
+            return allLogsCache.filter(log => { const date = new Date(log.date); return !Number.isNaN(date.getTime()) && date >= since; });
+        }
+
+        function generateDailyHandoverPDF() {
+            const logs = reportLogs(1);
+            const rows = logs.length ? logs.map(log => `<tr><td style="padding:8px;border-bottom:1px solid #e2e8f0;">${escapeHtml(log.name)}</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">${escapeHtml(log.type)}</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">${escapeHtml(log.action)}</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">${log.followUp === 'Yes' ? 'Follow-up' : '—'}</td></tr>`).join('') : '<tr><td colspan="4" style="padding:18px;text-align:center;">No records today.</td></tr>';
+            createReportPDF('Daily handover', new Date().toLocaleDateString(), `<p><b>Total records:</b> ${logs.length}</p><table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;"><thead><tr style="background:#eef2ff;text-align:left;"><th style="padding:8px;">Student</th><th style="padding:8px;">Type</th><th style="padding:8px;">Action</th><th style="padding:8px;">Follow-up</th></tr></thead><tbody>${rows}</tbody></table>`, `ICS_Daily_Handover_${new Date().toISOString().slice(0,10)}.pdf`);
+        }
+
+        function generateWeeklyReportPDF() {
+            const logs = reportLogs(7); const counts = {}; logs.forEach(log => { counts[log.type || 'Other'] = (counts[log.type || 'Other'] || 0) + 1; });
+            const rows = Object.entries(counts).sort((a,b) => b[1] - a[1]).map(([type,count]) => `<tr><td style="padding:8px;border-bottom:1px solid #e2e8f0;">${escapeHtml(type)}</td><td style="padding:8px;border-bottom:1px solid #e2e8f0;">${count}</td></tr>`).join('') || '<tr><td colspan="2" style="padding:18px;text-align:center;">No records in the last seven days.</td></tr>';
+            const followUps = logs.filter(log => log.followUp === 'Yes').length;
+            createReportPDF('Weekly medical activity report', 'Previous seven days', `<div style="display:flex;gap:12px;margin-bottom:18px;"><div style="flex:1;background:#f8fafc;padding:12px;border-radius:8px;"><b>Total records</b><br>${logs.length}</div><div style="flex:1;background:#f8fafc;padding:12px;border-radius:8px;"><b>Follow-ups</b><br>${followUps}</div></div><table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;"><thead><tr style="background:#eef2ff;text-align:left;"><th style="padding:8px;">Incident type</th><th style="padding:8px;">Count</th></tr></thead><tbody>${rows}</tbody></table>`, `ICS_Weekly_Report_${new Date().toISOString().slice(0,10)}.pdf`);
         }
         function fetchRoster(silent = false) {
             if (!CONFIG_URL) return;
